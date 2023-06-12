@@ -2,7 +2,8 @@
 <resources>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="padding_16">16dp</dimen>
-    <dimen name="padding_21">21dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
     <dimen name="main_menu_textSize">22sp</dimen>
     <dimen name="settings_menu_textSize">16sp</dimen>
 </resources>
