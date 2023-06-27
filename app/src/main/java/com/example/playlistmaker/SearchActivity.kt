@@ -11,10 +11,10 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 class SearchActivity : AppCompatActivity() {
-    var searchText: String = ""
+    private var searchText: String = ""
 
     companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +27,9 @@ class SearchActivity : AppCompatActivity() {
         backToolBar.setOnClickListener {
             finish()
         }
-        val inputEditText = findViewById<EditText>(R.id.inputEditText)
+        val inputEditText = findViewById<EditText>(R.id.editTextSearch)
 
-        val clearSearchButton = findViewById<ImageView>(R.id.clear_icon)
+        val clearSearchButton = findViewById<ImageView>(R.id.clearIconImageView)
         clearSearchButton.setOnClickListener {
             inputEditText.setText("")
             val inputMethodManager =
@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val searchEditText = findViewById<EditText>(R.id.inputEditText)
+                val searchEditText = findViewById<EditText>(R.id.editTextSearch)
                 searchText = searchEditText.text.toString()
             }
         }
@@ -58,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_TEXT, searchText)
     }
 
-    fun clearButtonVisibility(s: CharSequence?): Int {
+    private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
         } else {

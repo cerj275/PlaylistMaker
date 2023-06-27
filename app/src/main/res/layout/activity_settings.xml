@@ -25,6 +25,10 @@
 
         <TextView
             style="@style/TopBarTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:paddingStart="12dp"
             android:text="@string/settings"
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
@@ -48,20 +52,26 @@
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
     <TextView
-        android:id="@+id/share"
+        android:id="@+id/textViewShare"
         style="@style/SettingsMenuButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/share"
         app:drawableEndCompat="@drawable/ic_share" />
 
     <TextView
-        android:id="@+id/support"
+        android:id="@+id/textViewSupport"
         style="@style/SettingsMenuButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/support"
         app:drawableEndCompat="@drawable/ic_support" />
 
     <TextView
-        android:id="@+id/termsOfUse"
+        android:id="@+id/textViewTermsOfUse"
         style="@style/SettingsMenuButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/terms_of_use"
         app:drawableEndCompat="@drawable/ic_next" />
 </LinearLayout>

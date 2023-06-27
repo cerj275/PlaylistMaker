@@ -13,9 +13,9 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val backButton = findViewById<ImageButton>(R.id.buttonBack)
-        val share = findViewById<TextView>(R.id.share)
-        val support = findViewById<TextView>(R.id.support)
-        val termsOfUse = findViewById<TextView>(R.id.termsOfUse)
+        val share = findViewById<TextView>(R.id.textViewShare)
+        val support = findViewById<TextView>(R.id.textViewSupport)
+        val termsOfUse = findViewById<TextView>(R.id.textViewTermsOfUse)
 
         share.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
@@ -25,16 +25,16 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
         support.setOnClickListener {
-            val supportEmail = getString(R.string.yp_email)
-            val topic = getString(R.string.feedback_topic)
-            val message = getString(R.string.feedback_message)
-
-            val supportIntent = Intent(Intent.ACTION_SENDTO)
-            supportIntent.data = Uri.parse("mailto:")
-            supportIntent.putExtra(Intent.EXTRA_EMAIL, supportEmail)
-            supportIntent.putExtra(Intent.EXTRA_SUBJECT, topic)
-            supportIntent.putExtra(Intent.EXTRA_TEXT, message)
-            startActivity(supportIntent)
+            Intent(Intent.ACTION_SENDTO).apply {
+                val supportEmail = getString(R.string.yp_email)
+                val topic = getString(R.string.feedback_topic)
+                val message = getString(R.string.feedback_message)
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(supportEmail))
+                putExtra(Intent.EXTRA_SUBJECT, topic)
+                putExtra(Intent.EXTRA_TEXT, message)
+                startActivity(this)
+            }
         }
 
         termsOfUse.setOnClickListener {
