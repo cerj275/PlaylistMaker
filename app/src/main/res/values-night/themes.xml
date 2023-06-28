@@ -1,7 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/yp_black</item>
+        <item name="colorSecondary">@color/yp_black</item>
+        <item name="colorSecondaryVariant">@color/yp_white</item>
+        <item name="colorOnSecondary">@color/yp_white</item>
+        <item name="android:textColor">@color/yp_white</item>
+        <item name="thumbTint">@color/yp_blue</item>
+        <item name="trackTint">@color/yp_blue</item>
+        <item name="drawableTint">@color/yp_black</item>
+        <item name="android:textColorHint">@color/yp_black</item>
+
     </style>
 </resources>
