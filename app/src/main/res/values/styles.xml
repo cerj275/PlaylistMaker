@@ -29,10 +29,16 @@
         <item name="drawableTint">?attr/colorSecondaryVariant</item>
     </style>
 
-    <style name="TopBarTextViewStyle">
+    <style name="textViewTopBarStyle">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textSize">@dimen/main_menu_textSize</item>
+    </style>
+
+    <style name="artistNameTextViewStyle">
+        <item name="android:textSize">@dimen/text_size_11</item>
+        <item name="android:textColor">?attr/colorSecondaryVariant</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
 </resources>

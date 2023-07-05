@@ -24,7 +24,7 @@
             tools:ignore="ContentDescription" />
 
         <TextView
-            style="@style/TopBarTextViewStyle"
+            style="@style/textViewTopBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -73,5 +73,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/terms_of_use"
-        app:drawableEndCompat="@drawable/ic_next" />
+        app:drawableEndCompat="@drawable/ic_arrow_forward" />
 </LinearLayout>
