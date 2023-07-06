@@ -7,10 +7,13 @@
         <item name="colorSecondary">@color/yp_white</item>
         <item name="colorSecondaryVariant">@color/yp_grey</item>
         <item name="colorOnSecondary">@color/yp_black</item>
+        <item name="colorBackgroundFloating">@color/yp_light_gray</item>
         <item name="thumbTint">@color/yp_grey</item>
         <item name="trackTint">@color/yp_light_gray</item>
         <item name="drawableTint">@color/yp_grey</item>
         <item name="android:textColorHint">@color/yp_grey</item>
+        <item name="colorPrimaryVariant">@color/yp_grey</item>
+
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

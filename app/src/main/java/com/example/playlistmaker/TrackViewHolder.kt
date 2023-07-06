@@ -19,7 +19,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(item.artworkUrl100)
             .placeholder(R.drawable.ic_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(20))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_cover)))
             .into(cover)
         trackName.text = item.trackName
         artistName.text = item.artistName
