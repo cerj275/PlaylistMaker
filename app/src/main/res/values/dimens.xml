@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="corner_radius">16dp</dimen>
+    <dimen name="rounded_corners_cover">2dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="padding_20">20dp</dimen>
-    <dimen name="padding_10">10dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_44">44dp</dimen>
+    <dimen name="margin_66">66dp</dimen>
     <dimen name="main_menu_textSize">22sp</dimen>
     <dimen name="settings_menu_textSize">16sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
 </resources>

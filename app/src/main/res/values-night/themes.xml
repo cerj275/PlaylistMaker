@@ -7,11 +7,14 @@
         <item name="colorSecondary">@color/yp_black</item>
         <item name="colorSecondaryVariant">@color/yp_white</item>
         <item name="colorOnSecondary">@color/yp_white</item>
+        <item name="colorBackgroundFloating">@color/yp_white</item>
         <item name="android:textColor">@color/yp_white</item>
         <item name="thumbTint">@color/yp_blue</item>
         <item name="trackTint">@color/yp_blue</item>
         <item name="drawableTint">@color/yp_black</item>
         <item name="android:textColorHint">@color/yp_black</item>
+        <item name="colorPrimaryVariant">@color/yp_black</item>
+
 
     </style>
 </resources>
