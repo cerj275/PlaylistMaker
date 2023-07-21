@@ -27,7 +27,7 @@
         android:fontFamily="@font/ys_display_regular"
         android:maxLines="1"
         android:textColor="?attr/colorOnSecondary"
-        android:textSize="@dimen/settings_menu_textSize"
+        android:textSize="@dimen/settings_menu_text_size"
         tools:text="Название трека" />
 
     <LinearLayout
