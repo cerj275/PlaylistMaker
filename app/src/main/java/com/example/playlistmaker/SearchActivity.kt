@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -30,11 +31,25 @@ class SearchActivity : AppCompatActivity() {
         .build()
     private val itunesService = retrofit.create(ItunesApi::class.java)
     private val trackList = ArrayList<Track>()
-    private val trackAdapter = TrackAdapter()
+    private val trackAdapter = TrackAdapter {
+        if (searchHistory.add(it)) {
+            searchHistoryAdapter.notifyDataSetChanged()
+            searchHistory.writeSharePrefs()
+        } else {
+            searchHistoryAdapter.notifyItemInserted(0)
+            searchHistory.writeSharePrefs()
+        }
+    }
+    private var searchHistoryAdapter = TrackAdapter {}
     private lateinit var inputEditText: EditText
     private lateinit var nothingFound: LinearLayout
     private lateinit var noInternet: LinearLayout
     private lateinit var refreshSearch: Button
+    private lateinit var searchHistoryList: LinearLayout
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var clearSearchHistory: Button
+    private lateinit var searchFrameLayout: FrameLayout
+
 
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
@@ -43,6 +58,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        searchHistory = SearchHistory(getSharedPreferences(SEARCH_HISTORY, MODE_PRIVATE))
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
@@ -58,6 +74,9 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+            trackList.clear()
+            trackAdapter.notifyDataSetChanged()
+            setSearchHistoryVisible()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -66,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearSearchButton.visibility = clearButtonVisibility(s)
+                setSearchVisible()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -73,9 +93,10 @@ class SearchActivity : AppCompatActivity() {
                 searchText = searchEditText.text.toString()
             }
         }
-
         nothingFound = findViewById(R.id.linearLayoutNothingFound)
         noInternet = findViewById(R.id.linearLayoutNoInternet)
+        searchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
+        searchFrameLayout = findViewById(R.id.frameLayoutSearch)
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
@@ -87,47 +108,60 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        refreshSearch = findViewById<Button>(R.id.buttonRefreshSearch_).apply {
+        refreshSearch = findViewById<Button>(R.id.buttonRefreshSearch).apply {
             setOnClickListener { searchTrack() }
         }
+        clearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
+        clearSearchHistory.setOnClickListener {
+            searchHistory.clearSearchHistory()
+            searchHistoryAdapter.notifyDataSetChanged()
+            setSearchVisible()
+        }
+
         trackAdapter.trackList = trackList
-        val track = findViewById<RecyclerView>(R.id.recyclerViewSearch)
-        track.adapter = trackAdapter
+        val trackList = findViewById<RecyclerView>(R.id.recyclerViewSearch)
+        trackList.adapter = trackAdapter
 
+        searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
+        val searchHistoryList = findViewById<RecyclerView>(R.id.recyclerViewSearchHistory)
+        searchHistoryList.adapter = searchHistoryAdapter
 
+        if (searchHistory.searchHistoryTrackList.isNotEmpty()) {
+            setSearchHistoryVisible()
+        }
     }
 
     private fun searchTrack() {
-        itunesService.search(inputEditText.text.toString()).enqueue(object : Callback<ItunesResponse> {
+        itunesService.search(inputEditText.text.toString())
+            .enqueue(object : Callback<ItunesResponse> {
 
-            override fun onResponse(
-                call: Call<ItunesResponse>,
-                response: Response<ItunesResponse>
-            ) {
-                if (response.code() == 200) {
-                    trackList.clear()
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        trackList.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
-
-                        nothingFound.visibility = View.GONE
-                        noInternet.visibility = View.GONE
-                    } else {
-                        trackAdapter.trackList.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        nothingFound.visibility = View.VISIBLE
-                        noInternet.visibility = View.GONE
+                override fun onResponse(
+                    call: Call<ItunesResponse>,
+                    response: Response<ItunesResponse>
+                ) {
+                    if (response.code() == 200) {
+                        trackList.clear()
+                        if (response.body()?.results?.isNotEmpty() == true) {
+                            trackList.addAll(response.body()?.results!!)
+                            trackAdapter.notifyDataSetChanged()
+                            nothingFound.visibility = View.GONE
+                            noInternet.visibility = View.GONE
+                        } else {
+                            trackAdapter.trackList.clear()
+                            trackAdapter.notifyDataSetChanged()
+                            nothingFound.visibility = View.VISIBLE
+                            noInternet.visibility = View.GONE
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<ItunesResponse>, t: Throwable) {
-                trackAdapter.trackList.clear()
-                trackAdapter.notifyDataSetChanged()
-                nothingFound.visibility = View.GONE
-                noInternet.visibility = View.VISIBLE
-            }
-        })
+                override fun onFailure(call: Call<ItunesResponse>, t: Throwable) {
+                    trackAdapter.trackList.clear()
+                    trackAdapter.notifyDataSetChanged()
+                    nothingFound.visibility = View.GONE
+                    noInternet.visibility = View.VISIBLE
+                }
+            })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -141,5 +175,15 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+    }
+
+    private fun setSearchHistoryVisible() {
+        searchHistoryList.visibility = View.VISIBLE
+        searchFrameLayout.visibility = View.GONE
+    }
+
+    private fun setSearchVisible() {
+        searchFrameLayout.visibility = View.VISIBLE
+        searchHistoryList.visibility = View.GONE
     }
 }
