@@ -42,13 +42,13 @@ class SearchActivity : AppCompatActivity() {
     }
     private var searchHistoryAdapter = TrackAdapter {}
     private lateinit var inputEditText: EditText
-    private lateinit var nothingFound: LinearLayout
-    private lateinit var noInternet: LinearLayout
-    private lateinit var refreshSearch: Button
-    private lateinit var searchHistoryList: LinearLayout
+    private lateinit var llNothingFound: LinearLayout
+    private lateinit var llNoInternet: LinearLayout
+    private lateinit var bRefreshSearch: Button
+    private lateinit var llSearchHistoryList: LinearLayout
     private lateinit var searchHistory: SearchHistory
-    private lateinit var clearSearchHistory: Button
-    private lateinit var searchFrameLayout: FrameLayout
+    private lateinit var bClearSearchHistory: Button
+    private lateinit var flSearch: FrameLayout
 
 
     companion object {
@@ -85,7 +85,10 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearSearchButton.visibility = clearButtonVisibility(s)
-                setSearchVisible()
+                if (inputEditText.hasFocus() && s?.isEmpty() == true) {
+                    setSearchHistoryVisible()
+                }
+                    setSearchVisible()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -93,10 +96,10 @@ class SearchActivity : AppCompatActivity() {
                 searchText = searchEditText.text.toString()
             }
         }
-        nothingFound = findViewById(R.id.linearLayoutNothingFound)
-        noInternet = findViewById(R.id.linearLayoutNoInternet)
-        searchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
-        searchFrameLayout = findViewById(R.id.frameLayoutSearch)
+        llNothingFound = findViewById(R.id.linearLayoutNothingFound)
+        llNoInternet = findViewById(R.id.linearLayoutNoInternet)
+        llSearchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
+        flSearch = findViewById(R.id.frameLayoutSearch)
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
@@ -108,11 +111,11 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        refreshSearch = findViewById<Button>(R.id.buttonRefreshSearch).apply {
+        bRefreshSearch = findViewById<Button>(R.id.buttonRefreshSearch).apply {
             setOnClickListener { searchTrack() }
         }
-        clearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
-        clearSearchHistory.setOnClickListener {
+        bClearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
+        bClearSearchHistory.setOnClickListener {
             searchHistory.clearSearchHistory()
             searchHistoryAdapter.notifyDataSetChanged()
             setSearchVisible()
@@ -144,13 +147,13 @@ class SearchActivity : AppCompatActivity() {
                         if (response.body()?.results?.isNotEmpty() == true) {
                             trackList.addAll(response.body()?.results!!)
                             trackAdapter.notifyDataSetChanged()
-                            nothingFound.visibility = View.GONE
-                            noInternet.visibility = View.GONE
+                            llNothingFound.visibility = View.GONE
+                            llNoInternet.visibility = View.GONE
                         } else {
                             trackAdapter.trackList.clear()
                             trackAdapter.notifyDataSetChanged()
-                            nothingFound.visibility = View.VISIBLE
-                            noInternet.visibility = View.GONE
+                            llNothingFound.visibility = View.VISIBLE
+                            llNoInternet.visibility = View.GONE
                         }
                     }
                 }
@@ -158,8 +161,8 @@ class SearchActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<ItunesResponse>, t: Throwable) {
                     trackAdapter.trackList.clear()
                     trackAdapter.notifyDataSetChanged()
-                    nothingFound.visibility = View.GONE
-                    noInternet.visibility = View.VISIBLE
+                    llNothingFound.visibility = View.GONE
+                    llNoInternet.visibility = View.VISIBLE
                 }
             })
     }
@@ -178,12 +181,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setSearchHistoryVisible() {
-        searchHistoryList.visibility = View.VISIBLE
-        searchFrameLayout.visibility = View.GONE
+        llSearchHistoryList.visibility = View.VISIBLE
+        flSearch.visibility = View.GONE
     }
 
     private fun setSearchVisible() {
-        searchFrameLayout.visibility = View.VISIBLE
-        searchHistoryList.visibility = View.GONE
+        flSearch.visibility = View.VISIBLE
+        llSearchHistoryList.visibility = View.GONE
     }
 }
