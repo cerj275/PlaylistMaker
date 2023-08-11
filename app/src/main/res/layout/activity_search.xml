@@ -163,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="18dp"
-            android:text="@string/you_searched"
+            android:text="@string/search_message"
             android:textFontWeight="500" />
 
         <androidx.recyclerview.widget.RecyclerView
