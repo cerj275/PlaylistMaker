@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.TextView
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,7 @@ class SettingsActivity : AppCompatActivity() {
         val share = findViewById<TextView>(R.id.textViewShare)
         val support = findViewById<TextView>(R.id.textViewSupport)
         val termsOfUse = findViewById<TextView>(R.id.textViewTermsOfUse)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
         share.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
@@ -45,6 +47,15 @@ class SettingsActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             finish()
+        }
+        themeSwitcher.isChecked = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+            .getBoolean(DARK_THEME_ENABLED, false)
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+                .edit()
+                .putBoolean(DARK_THEME_ENABLED, checked)
+                .apply()
         }
     }
 }
