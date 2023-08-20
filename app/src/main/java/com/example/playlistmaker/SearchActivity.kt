@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -35,12 +36,16 @@ class SearchActivity : AppCompatActivity() {
         if (searchHistory.add(it)) {
             searchHistoryAdapter.notifyDataSetChanged()
             searchHistory.writeSharePrefs()
+            startPlayerActivity(it)
         } else {
             searchHistoryAdapter.notifyItemInserted(0)
             searchHistory.writeSharePrefs()
+            startPlayerActivity(it)
         }
     }
-    private var searchHistoryAdapter = TrackAdapter {}
+    private var searchHistoryAdapter = TrackAdapter {
+        startPlayerActivity(it)
+    }
     private lateinit var inputEditText: EditText
     private lateinit var llNothingFound: LinearLayout
     private lateinit var llNoInternet: LinearLayout
@@ -53,6 +58,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val TRACK_KEY = "track_key"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +94,7 @@ class SearchActivity : AppCompatActivity() {
                 if (inputEditText.hasFocus() && s?.isEmpty() == true) {
                     setSearchHistoryVisible()
                 }
-                    setSearchVisible()
+                setSearchVisible()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -189,4 +195,11 @@ class SearchActivity : AppCompatActivity() {
         flSearch.visibility = View.VISIBLE
         llSearchHistoryList.visibility = View.GONE
     }
+
+    private fun startPlayerActivity(track: Track) {
+        val intent = Intent(this, PlayerActivity::class.java)
+        intent.putExtra(TRACK_KEY, track)
+        startActivity(intent)
+    }
+
 }
