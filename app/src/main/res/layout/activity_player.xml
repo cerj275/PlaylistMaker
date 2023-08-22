@@ -45,8 +45,7 @@
         android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnSecondary"
-        tools:ignore="ContentDescription" />
+        app:tint="?attr/colorOnSecondary" />
 
     <ImageView
         android:id="@+id/cover"
@@ -59,8 +58,7 @@
         app:layout_constraintEnd_toStartOf="@id/right_border_24"
         app:layout_constraintStart_toEndOf="@id/left_border_24"
         app:layout_constraintTop_toBottomOf="@id/buttonBack"
-        app:srcCompat="@drawable/ic_placeholder"
-        tools:ignore="ContentDescription" />
+        app:srcCompat="@drawable/ic_placeholder" />
 
     <TextView
         android:id="@+id/track_name"
@@ -75,7 +73,6 @@
         app:fontWeight="500"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@id/right_border_24"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/left_border_24"
         app:layout_constraintTop_toBottomOf="@id/cover"
         tools:text="Yesterday (Remastered 2009)" />
@@ -101,13 +98,12 @@
         android:id="@+id/queue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
         android:tag="queueButton"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toEndOf="@id/left_border_24"
-        app:layout_constraintTop_toBottomOf="@id/top_barrier"
-        app:srcCompat="@drawable/ic_queue"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintTop_toTopOf="@id/play_button"
+        app:layout_constraintBottom_toBottomOf="@id/play_button"
+        app:srcCompat="@drawable/ic_queue" />
 
     <ImageView
         android:id="@+id/play_button"
@@ -125,12 +121,11 @@
         android:id="@+id/favorite_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
         android:tag="favoriteButton"
         app:layout_constraintEnd_toStartOf="@id/right_border_24"
-        app:layout_constraintTop_toBottomOf="@id/top_barrier"
-        app:srcCompat="@drawable/ic_favorite"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintTop_toTopOf="@id/play_button"
+        app:layout_constraintBottom_toBottomOf="@id/play_button"
+        app:srcCompat="@drawable/ic_favorite" />
 
     <TextView
         android:id="@+id/playback_time"
@@ -227,9 +222,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_16"
+        android:ellipsize="end"
         android:gravity="end"
+        android:lines="1"
+        android:paddingStart="@dimen/padding_8"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/track_year"
         app:layout_constraintEnd_toStartOf="@id/right_border_16"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/album_title"
         app:layout_constraintTop_toBottomOf="@id/track_duration"
         tools:text="Yesterday (Remastered 2009)" />
 
