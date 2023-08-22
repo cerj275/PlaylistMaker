@@ -2,12 +2,16 @@
 <resources>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="rounded_corners_cover">2dp</dimen>
+    <dimen name="rounded_corners_big_cover">8dp</dimen>
     <dimen name="refresh_button_corner_radius">54dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
     <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="padding_20">20dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_44">44dp</dimen>
     <dimen name="margin_66">66dp</dimen>
@@ -16,6 +20,8 @@
     <dimen name="main_menu_text_size">22sp</dimen>
     <dimen name="settings_menu_text_size">16sp</dimen>
     <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
     <dimen name="error_text_size">19sp</dimen>
-    <dimen name="refresh_button_text_size">14sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
 </resources>
