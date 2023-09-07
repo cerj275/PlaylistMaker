@@ -2,8 +2,9 @@ package com.example.playlistmaker
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -15,6 +16,8 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,7 +26,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+    companion object {
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val TRACK_KEY = "track_key"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 
+    private val searchRunnable = Runnable { searchTrack() }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
     private var searchText: String = ""
     private val itunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -33,18 +45,22 @@ class SearchActivity : AppCompatActivity() {
     private val itunesService = retrofit.create(ItunesApi::class.java)
     private val trackList = ArrayList<Track>()
     private val trackAdapter = TrackAdapter {
-        if (searchHistory.add(it)) {
-            searchHistoryAdapter.notifyDataSetChanged()
-            searchHistory.writeSharePrefs()
-            startPlayerActivity(it)
-        } else {
-            searchHistoryAdapter.notifyItemInserted(0)
-            searchHistory.writeSharePrefs()
-            startPlayerActivity(it)
+        if (clickDebounce()) {
+            if (searchHistory.add(it)) {
+                searchHistoryAdapter.notifyDataSetChanged()
+                searchHistory.writeSharePrefs()
+                startPlayerActivity(it)
+            } else {
+                searchHistoryAdapter.notifyItemInserted(0)
+                searchHistory.writeSharePrefs()
+                startPlayerActivity(it)
+            }
         }
     }
     private var searchHistoryAdapter = TrackAdapter {
-        startPlayerActivity(it)
+        if (clickDebounce()) {
+            startPlayerActivity(it)
+        }
     }
     private lateinit var inputEditText: EditText
     private lateinit var llNothingFound: LinearLayout
@@ -54,12 +70,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SearchHistory
     private lateinit var bClearSearchHistory: Button
     private lateinit var flSearch: FrameLayout
+    private lateinit var pbSearchLoading: ProgressBar
+    private lateinit var rvSearch: RecyclerView
 
-
-    companion object {
-        private const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val TRACK_KEY = "track_key"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +86,7 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
         inputEditText = findViewById(R.id.editTextSearch)
+        pbSearchLoading = findViewById(R.id.progressBarSearchLoading)
 
         val clearSearchButton = findViewById<ImageView>(R.id.imageViewClearIcon)
         clearSearchButton.setOnClickListener {
@@ -95,6 +109,7 @@ class SearchActivity : AppCompatActivity() {
                     setSearchHistoryVisible()
                 }
                 setSearchVisible()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -128,8 +143,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.trackList = trackList
-        val trackList = findViewById<RecyclerView>(R.id.recyclerViewSearch)
-        trackList.adapter = trackAdapter
+        rvSearch = findViewById(R.id.recyclerViewSearch)
+        rvSearch.adapter = trackAdapter
 
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         val searchHistoryList = findViewById<RecyclerView>(R.id.recyclerViewSearchHistory)
@@ -141,13 +156,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchTrack() {
+        rvSearch.visibility = View.GONE
+        pbSearchLoading.visibility = View.VISIBLE
         itunesService.search(inputEditText.text.toString())
             .enqueue(object : Callback<ItunesResponse> {
-
                 override fun onResponse(
                     call: Call<ItunesResponse>,
                     response: Response<ItunesResponse>
                 ) {
+                    pbSearchLoading.visibility = View.GONE
+                    rvSearch.visibility = View.VISIBLE
                     if (response.code() == 200) {
                         trackList.clear()
                         if (response.body()?.results?.isNotEmpty() == true) {
@@ -200,6 +218,20 @@ class SearchActivity : AppCompatActivity() {
         val intent = Intent(this, PlayerActivity::class.java)
         intent.putExtra(TRACK_KEY, track)
         startActivity(intent)
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if(isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
 }
