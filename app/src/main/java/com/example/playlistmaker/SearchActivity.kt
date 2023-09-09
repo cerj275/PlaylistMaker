@@ -72,24 +72,27 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var flSearch: FrameLayout
     private lateinit var pbSearchLoading: ProgressBar
     private lateinit var rvSearch: RecyclerView
+    private lateinit var rvSearchHistoryList: RecyclerView
+    private lateinit var etSearch: EditText
+    private lateinit var bClearSearch: ImageView
+    private lateinit var bBackToolBar: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        initViews()
+
         searchHistory = SearchHistory(getSharedPreferences(SEARCH_HISTORY, MODE_PRIVATE))
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
-        val backToolBar = findViewById<ImageButton>(R.id.buttonBack)
-        backToolBar.setOnClickListener {
+        bBackToolBar.setOnClickListener {
             finish()
         }
-        inputEditText = findViewById(R.id.editTextSearch)
-        pbSearchLoading = findViewById(R.id.progressBarSearchLoading)
 
-        val clearSearchButton = findViewById<ImageView>(R.id.imageViewClearIcon)
-        clearSearchButton.setOnClickListener {
+        bClearSearch.setOnClickListener {
             inputEditText.setText("")
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -104,7 +107,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearSearchButton.visibility = clearButtonVisibility(s)
+                bClearSearch.visibility = clearButtonVisibility(s)
                 if (inputEditText.hasFocus() && s?.isEmpty() == true) {
                     setSearchHistoryVisible()
                 }
@@ -113,14 +116,10 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val searchEditText = findViewById<EditText>(R.id.editTextSearch)
-                searchText = searchEditText.text.toString()
+                searchText = etSearch.text.toString()
             }
         }
-        llNothingFound = findViewById(R.id.linearLayoutNothingFound)
-        llNoInternet = findViewById(R.id.linearLayoutNoInternet)
-        llSearchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
-        flSearch = findViewById(R.id.frameLayoutSearch)
+
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
@@ -132,10 +131,9 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        bRefreshSearch = findViewById<Button>(R.id.buttonRefreshSearch).apply {
+        bRefreshSearch.apply {
             setOnClickListener { searchTrack() }
         }
-        bClearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
         bClearSearchHistory.setOnClickListener {
             searchHistory.clearSearchHistory()
             searchHistoryAdapter.notifyDataSetChanged()
@@ -143,18 +141,33 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.trackList = trackList
-        rvSearch = findViewById(R.id.recyclerViewSearch)
         rvSearch.adapter = trackAdapter
 
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
-        val searchHistoryList = findViewById<RecyclerView>(R.id.recyclerViewSearchHistory)
-        searchHistoryList.adapter = searchHistoryAdapter
+        rvSearchHistoryList.adapter = searchHistoryAdapter
 
         if (searchHistory.searchHistoryTrackList.isNotEmpty()) {
             setSearchHistoryVisible()
         }
     }
 
+    private fun initViews() {
+        llNothingFound = findViewById(R.id.linearLayoutNothingFound)
+        llNoInternet = findViewById(R.id.linearLayoutNoInternet)
+        llSearchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
+        flSearch = findViewById(R.id.frameLayoutSearch)
+        bRefreshSearch = findViewById(R.id.buttonRefreshSearch)
+        bClearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
+        rvSearch = findViewById(R.id.recyclerViewSearch)
+        rvSearchHistoryList = findViewById(R.id.recyclerViewSearchHistory)
+        etSearch = findViewById(R.id.editTextSearch)
+        bClearSearch = findViewById(R.id.imageViewClearIcon)
+        inputEditText = findViewById(R.id.editTextSearch)
+        pbSearchLoading = findViewById(R.id.progressBarSearchLoading)
+        bBackToolBar = findViewById<ImageButton>(R.id.buttonBack)
+
+
+    }
     private fun searchTrack() {
         rvSearch.visibility = View.GONE
         pbSearchLoading.visibility = View.VISIBLE

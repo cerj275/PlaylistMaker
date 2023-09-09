@@ -48,18 +48,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        ivAlbumCover = findViewById(R.id.cover)
-        tvTrackName = findViewById(R.id.track_name)
-        tvArtistName = findViewById(R.id.artist_name)
-        tvDuration = findViewById(R.id.track_duration)
-        tvAlbum = findViewById(R.id.album_title)
-        tvTrackAlbum = findViewById(R.id.track_album)
-        tvYear = findViewById(R.id.track_year)
-        tvGenre = findViewById(R.id.track_genre)
-        tvCountry = findViewById(R.id.track_country)
-        tvPlayBackTime = findViewById(R.id.playback_time)
-        ibBackButton = findViewById(R.id.buttonBack)
-        ivPlayButton = findViewById(R.id.play_button)
+        initViews()
 
         ibBackButton.setOnClickListener {
             finish()
@@ -104,6 +93,21 @@ class PlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
+    }
+
+    private fun initViews() {
+        ivAlbumCover = findViewById(R.id.cover)
+        tvTrackName = findViewById(R.id.track_name)
+        tvArtistName = findViewById(R.id.artist_name)
+        tvDuration = findViewById(R.id.track_duration)
+        tvAlbum = findViewById(R.id.album_title)
+        tvTrackAlbum = findViewById(R.id.track_album)
+        tvYear = findViewById(R.id.track_year)
+        tvGenre = findViewById(R.id.track_genre)
+        tvCountry = findViewById(R.id.track_country)
+        tvPlayBackTime = findViewById(R.id.playback_time)
+        ibBackButton = findViewById(R.id.buttonBack)
+        ivPlayButton = findViewById(R.id.play_button)
     }
 
     private fun preparePlayer() {
