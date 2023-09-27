@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.player
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,22 +11,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.SearchActivity.Companion.TRACK_KEY
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.PlayerState
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.search.SearchActivity.Companion.TRACK_KEY
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val ZERO_PLAYBACK_TIME_VALUE = "00:00"
         private const val UPDATE_PLAYBACK_TIME_VALUE = 300L
     }
 
-    private var playerState = STATE_DEFAULT
-    private var mediaPlayer = MediaPlayer()
+    private val playerInteractor = Creator.provideGetPlayerInteractor()
+
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var track: Track
@@ -77,7 +76,7 @@ class PlayerActivity : AppCompatActivity() {
             tvTrackAlbum.text = track.collectionName
         }
 
-        preparePlayer()
+        preparePlayer(track.previewUrl)
 
         ivPlayButton.setOnClickListener {
             playbackControl()
@@ -92,7 +91,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        playerInteractor.releasePlayer()
     }
 
     private fun initViews() {
@@ -110,43 +109,36 @@ class PlayerActivity : AppCompatActivity() {
         ivPlayButton = findViewById(R.id.play_button)
     }
 
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(track.previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            ivPlayButton.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            tvPlayBackTime.text = ZERO_PLAYBACK_TIME_VALUE
-            playerState = STATE_PREPARED
-            ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
-            handler.removeCallbacks(updatePlaybackTime())
-        }
+    private fun preparePlayer(url: String) {
+        playerInteractor.preparePlayer(url)
+        setOnCompletionListener()
     }
 
     private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerInteractor.startPlayer()
         ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_pause))
         handler.post(updatePlaybackTime())
     }
 
     private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerInteractor.pausePlayer()
         ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
         handler.removeCallbacks(updatePlaybackTime())
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
+        when (playerInteractor.getPlayerState()) {
+            PlayerState.STATE_PLAYING -> {
                 pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED -> {
                 startPlayer()
+            }
+
+            PlayerState.STATE_DEFAULT -> {
+                startPlayer()
+                setOnCompletionListener()
             }
         }
     }
@@ -154,14 +146,22 @@ class PlayerActivity : AppCompatActivity() {
     private fun updatePlaybackTime(): Runnable {
         return object : Runnable {
             override fun run() {
-                if (playerState == STATE_PLAYING) {
+                if (playerInteractor.getPlayerState() == PlayerState.STATE_PLAYING) {
                     tvPlayBackTime.text = SimpleDateFormat(
                         "mm:ss",
                         Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
+                    ).format(playerInteractor.getCurrentPosition())
                     handler.postDelayed(this, UPDATE_PLAYBACK_TIME_VALUE)
                 }
             }
+        }
+    }
+
+    private fun setOnCompletionListener() {
+        playerInteractor.setOnCompletionListener {
+            tvPlayBackTime.text = ZERO_PLAYBACK_TIME_VALUE
+            ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
+            handler.removeCallbacks(updatePlaybackTime())
         }
     }
 }

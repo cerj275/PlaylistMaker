@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -19,6 +19,14 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.TracksSearchResponse
+import com.example.playlistmaker.data.network.ItunesApi
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.SEARCH_HISTORY
+import com.example.playlistmaker.presentation.SearchHistory
+import com.example.playlistmaker.presentation.TrackAdapter
+import com.example.playlistmaker.ui.player.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -171,11 +179,11 @@ class SearchActivity : AppCompatActivity() {
     private fun searchTrack() {
         rvSearch.visibility = View.GONE
         pbSearchLoading.visibility = View.VISIBLE
-        itunesService.search(inputEditText.text.toString())
-            .enqueue(object : Callback<ItunesResponse> {
+        itunesService.searchTracks(inputEditText.text.toString())
+            .enqueue(object : Callback<TracksSearchResponse> {
                 override fun onResponse(
-                    call: Call<ItunesResponse>,
-                    response: Response<ItunesResponse>
+                    call: Call<TracksSearchResponse>,
+                    response: Response<TracksSearchResponse>
                 ) {
                     pbSearchLoading.visibility = View.GONE
                     rvSearch.visibility = View.VISIBLE
@@ -195,7 +203,7 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<ItunesResponse>, t: Throwable) {
+                override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
                     trackAdapter.trackList.clear()
                     trackAdapter.notifyDataSetChanged()
                     llNothingFound.visibility = View.GONE
