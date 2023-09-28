@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.presentation.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -20,13 +20,13 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.SEARCH_HISTORY
+import com.example.playlistmaker.data.SearchHistory
 import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.data.network.ItunesApi
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.SEARCH_HISTORY
-import com.example.playlistmaker.presentation.SearchHistory
 import com.example.playlistmaker.presentation.TrackAdapter
-import com.example.playlistmaker.ui.player.PlayerActivity
+import com.example.playlistmaker.presentation.ui.player.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

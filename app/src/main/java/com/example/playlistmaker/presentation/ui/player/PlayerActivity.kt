@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.player
+package com.example.playlistmaker.presentation.ui.player
 
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +15,7 @@ import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.PlayerState
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.search.SearchActivity.Companion.TRACK_KEY
+import com.example.playlistmaker.presentation.ui.search.SearchActivity.Companion.TRACK_KEY
 import java.text.SimpleDateFormat
 import java.util.Locale
 
