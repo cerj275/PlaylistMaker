@@ -83,9 +83,6 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.observeState().observe(this) {
             render(it)
         }
-//        viewModel.observePlaybackTimeState().observe(this) { playbackTime ->
-//            setPlaybackTime(playbackTime)
-//        }
 
         viewModel.preparePlayer()
         ivPlayButton.setOnClickListener {
