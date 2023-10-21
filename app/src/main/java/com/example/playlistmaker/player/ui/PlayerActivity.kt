@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.player.domain.models.PlayerScreenState
+import com.example.playlistmaker.player.view_model.PlayerScreenState
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SearchActivity.Companion.TRACK_KEY
@@ -24,7 +24,6 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private lateinit var viewModel: PlayerViewModel
-
     private lateinit var track: Track
     private lateinit var ibBackButton: ImageButton
     private lateinit var ivAlbumCover: ImageView
@@ -60,7 +59,12 @@ class PlayerActivity : AppCompatActivity() {
         tvArtistName.text = track.artistName
         tvDuration.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
-        tvYear.text = track.releaseDate.substring(0, 4)
+
+        if (track.releaseDate.isNullOrEmpty()){
+            tvYear.text = ""
+        } else {
+            tvYear.text = track.releaseDate?.substring(0, 4)
+        }
         tvGenre.text = track.primaryGenreName
         tvCountry.text = track.country
 
@@ -79,9 +83,9 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.observeState().observe(this) {
             render(it)
         }
-        viewModel.observePlaybackTimeState().observe(this) { playbackTime ->
-            setPlaybackTime(playbackTime)
-        }
+//        viewModel.observePlaybackTimeState().observe(this) { playbackTime ->
+//            setPlaybackTime(playbackTime)
+//        }
 
         viewModel.preparePlayer()
         ivPlayButton.setOnClickListener {
@@ -120,6 +124,7 @@ class PlayerActivity : AppCompatActivity() {
             is PlayerScreenState.PreparedScreenState -> showPreparedScreen()
             is PlayerScreenState.PlayingScreenState -> showPlayingScreen()
             is PlayerScreenState.PauseScreenState -> showPauseScreen()
+            is PlayerScreenState.TimerState -> setPlaybackTime(state.playbackTimer)
         }
     }
 
@@ -146,5 +151,6 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setPlaybackTime(time: String) {
         tvPlayBackTime.text = time
+
     }
 }

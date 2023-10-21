@@ -38,7 +38,6 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var searchText: String = ""
-    private val trackList = ArrayList<Track>()
     private val trackAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it)
@@ -91,7 +90,7 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
-            trackList.clear()
+            trackAdapter.trackList.clear()
             trackAdapter.notifyDataSetChanged()
         }
 
@@ -225,9 +224,8 @@ class SearchActivity : AppCompatActivity() {
         llNoInternet.visibility = View.GONE
         llNothingFound.visibility = View.GONE
         llSearchHistoryList.visibility = View.GONE
-        trackList.clear()
-        trackList.addAll(tracks)
-        trackAdapter.trackList = trackList
+        trackAdapter.trackList.clear()
+        trackAdapter.trackList.addAll(tracks)
         trackAdapter.notifyDataSetChanged()
     }
 
