@@ -30,14 +30,15 @@ class PlayerViewModel(
             }
         }
 
-        private const val UPDATE_PLAYBACK_TIME_VALUE = 100L
+        private const val UPDATE_PLAYBACK_TIME_VALUE = 300L
     }
 
     private val handler = Handler(Looper.getMainLooper())
-    private val currentPlaybackTime = MutableLiveData<String>()
 
     private val stateLiveData = MutableLiveData<PlayerScreenState>()
-
+    init {
+        stateLiveData.value = PlayerScreenState.DefaultScreenState
+    }
     fun observeState(): LiveData<PlayerScreenState> = stateLiveData
 
     private fun renderState(playerState: PlayerScreenState) {
@@ -51,7 +52,7 @@ class PlayerViewModel(
                 renderState(PlayerScreenState.PreparedScreenState)
             },
             onCompletionListener = {
-                handler.removeCallbacks(updatePlaybackTime())
+                handler.removeCallbacks(this::updatePlaybackTime)
                 renderState(PlayerScreenState.PreparedScreenState)
             }
         )
@@ -60,18 +61,18 @@ class PlayerViewModel(
     private fun startPlayer() {
         playerInteractor.startPlayer()
         renderState(PlayerScreenState.PlayingScreenState)
-        handler.post(updatePlaybackTime())
+        handler.post(this::updatePlaybackTime)
     }
 
     fun pausePlayer() {
         playerInteractor.pausePlayer()
         renderState(PlayerScreenState.PauseScreenState)
-        handler.removeCallbacks(updatePlaybackTime())
+        handler.removeCallbacks(this::updatePlaybackTime)
     }
 
     fun releasePlayer() {
         playerInteractor.releasePlayer()
-        handler.removeCallbacks(updatePlaybackTime())
+        handler.removeCallbacks(this::updatePlaybackTime)
     }
 
     fun playbackControl() {
@@ -82,24 +83,18 @@ class PlayerViewModel(
         }
     }
 
-    private fun updatePlaybackTime(): Runnable {
-        return object : Runnable {
+    private fun updatePlaybackTime() {
+        handler.post(object : Runnable {
             override fun run() {
                 handler.postDelayed({
                     if (playerInteractor.isPlaying()) {
-                        val playbackTime = SimpleDateFormat(
-                            "mm:ss",
-                            Locale.getDefault()
-                        ).format(playerInteractor.getCurrentPosition())
-                        setPlaybackTime(playbackTime)
+                        val playbackTime = SimpleDateFormat("mm:ss", Locale.getDefault())
+                            .format(playerInteractor.getCurrentPosition())
+                        stateLiveData.postValue(PlayerScreenState.TimerState(playbackTime))
                         handler.postDelayed(this, UPDATE_PLAYBACK_TIME_VALUE)
                     }
                 }, UPDATE_PLAYBACK_TIME_VALUE)
             }
-        }
-    }
-    private fun setPlaybackTime(playbackTime: String) {
-        currentPlaybackTime.value = playbackTime
-        renderState(PlayerScreenState.TimerState(playbackTime))
+        })
     }
 }
