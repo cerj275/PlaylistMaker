@@ -8,7 +8,7 @@ import com.example.playlistmaker.util.Resource
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: SearchHistory
+    private val localStorage: SearchHistoryImpl
 ) : TracksRepository {
     override fun searchTracks(expression: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))

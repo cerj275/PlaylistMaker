@@ -5,12 +5,6 @@ import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.search.data.SearchHistory
-import com.example.playlistmaker.search.data.TracksRepositoryImpl
-import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.api.TracksRepository
-import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.example.playlistmaker.settings.data.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
@@ -24,16 +18,16 @@ object Creator {
 
     private const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
 
-    private fun getTracksRepository(context: Context): TracksRepository {
-        return TracksRepositoryImpl(
-            RetrofitNetworkClient(context),
-            SearchHistory(context.getSharedPreferences(SHARED_PREFERENCE, Context.MODE_PRIVATE))
-        )
-    }
-
-    fun provideTracksInteractor(context: Context): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository(context))
-    }
+//    private fun getTracksRepository(context: Context): TracksRepository {
+//        return TracksRepositoryImpl(
+//            RetrofitNetworkClient(context),
+//            SearchHistory(context.getSharedPreferences(SHARED_PREFERENCE, Context.MODE_PRIVATE))
+//        )
+//    }
+//
+//    fun provideTracksInteractor(context: Context): TracksInteractor {
+//        return TracksInteractorImpl(getTracksRepository(context))
+//    }
 
     fun getPlayerInteractor(): PlayerInteractor {
         return PlayerInteractorImpl(providePlayerRepository())
