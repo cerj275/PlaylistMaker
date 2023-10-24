@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -15,6 +14,8 @@ import com.example.playlistmaker.player.view_model.PlayerScreenState
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SearchActivity.Companion.TRACK_KEY
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,7 +24,10 @@ class PlayerActivity : AppCompatActivity() {
         private const val ZERO_PLAYBACK_TIME_VALUE = "00:00"
     }
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(track)
+    }
+
     private lateinit var track: Track
     private lateinit var ibBackButton: ImageButton
     private lateinit var ivAlbumCover: ImageView
@@ -74,11 +78,6 @@ class PlayerActivity : AppCompatActivity() {
         } else {
             tvTrackAlbum.text = track.collectionName
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(track)
-        )[PlayerViewModel::class.java]
 
         viewModel.observeState().observe(this) {
             render(it)

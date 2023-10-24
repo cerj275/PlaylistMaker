@@ -1,12 +1,15 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryImpl
 import com.example.playlistmaker.search.data.network.ItunesApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.domain.api.SearchHistory
+import com.example.playlistmaker.sharing.data.api.ExternalNavigator
+import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -34,5 +37,17 @@ val dataModule = module {
 
     single<SearchHistory> {
         SearchHistoryImpl(get(),get())
+    }
+
+    single {
+        androidContext().getSharedPreferences("shared_preference", Context.MODE_PRIVATE)
+    }
+
+    factory {
+        MediaPlayer()
+    }
+
+    single<ExternalNavigator> {
+        ExternalNavigatorImpl(androidContext())
     }
 }

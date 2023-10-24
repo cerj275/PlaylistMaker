@@ -10,7 +10,6 @@ class SearchViewModel(
     private val interactor: TracksInteractor
 ) : ViewModel() {
 
-
     private val stateLiveData = MutableLiveData<SearchScreenState>()
 
     fun observeState(): LiveData<SearchScreenState> = stateLiveData

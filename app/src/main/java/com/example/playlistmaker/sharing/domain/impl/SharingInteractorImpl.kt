@@ -37,8 +37,10 @@ class SharingInteractorImpl(
 
     companion object {
         private const val EMAIL = "cerj275@yandex.ru"
-        private const val SUBJECT = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
-        private const val TEXT_MESSAGE = "Спасибо разработчикам и разработчицам за крутое приложение!"
+        private const val SUBJECT =
+            "Сообщение разработчикам и разработчицам приложения Playlist Maker"
+        private const val TEXT_MESSAGE =
+            "Спасибо разработчикам и разработчицам за крутое приложение!"
         private const val APP_LINK = "https://practicum.yandex.ru/android-developer/"
         private const val TERMS_LINK = "https://yandex.ru/legal/practicum_offer/"
     }
