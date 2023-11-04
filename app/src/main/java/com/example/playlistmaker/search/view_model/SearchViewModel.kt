@@ -1,30 +1,14 @@
 package com.example.playlistmaker.search.view_model
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.util.Creator
 
 class SearchViewModel(
-    application: Application
-) : AndroidViewModel(application) {
-
-    companion object {
-        fun getModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val interactor = Creator.provideTracksInteractor(application)
+    private val interactor: TracksInteractor
+) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<SearchScreenState>()
 
@@ -35,13 +19,18 @@ class SearchViewModel(
 
     fun onTextChanged(searchText: String?) {
         if (searchText.isNullOrEmpty()) {
-            if (interactor.readSearchHistory().isNotEmpty()) { renderState(
-                SearchScreenState.HistoryContent(
-                    interactor.readSearchHistory()
+            if (interactor.readSearchHistory().isNotEmpty()) {
+                renderState(
+                    SearchScreenState.HistoryContent(
+                        interactor.readSearchHistory()
+                    )
                 )
-            ) } else { renderState(SearchScreenState.EmptySearch) }
+            } else {
+                renderState(SearchScreenState.EmptySearch)
+            }
         }
     }
+
     fun onFocusChanged(hasFocus: Boolean, searchText: String) {
         if (hasFocus && searchText.isEmpty() && interactor.readSearchHistory().isNotEmpty()) {
             renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
@@ -53,6 +42,7 @@ class SearchViewModel(
             renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
         }
     }
+
     fun clearSearchHistory() {
         interactor.clearSearchHistory()
         renderState(SearchScreenState.EmptyScreen)

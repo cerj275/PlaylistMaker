@@ -4,20 +4,17 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.view_model.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
+
+    private val viewModel: SettingsViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        val viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getViewModelFactory()
-        )[SettingsViewModel::class.java]
 
         val bBack = findViewById<ImageButton>(R.id.buttonBack)
         val tvShare = findViewById<TextView>(R.id.textViewShare)
@@ -26,21 +23,21 @@ class SettingsActivity : AppCompatActivity() {
         val smThemeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
         tvShare.setOnClickListener {
-            viewModel.onSharePressed()
+            viewModel.shareLink()
         }
 
         tvSupport.setOnClickListener {
-            viewModel.onSupportPressed()
+            viewModel.sendMailToSupport()
         }
 
         tvTermsOfUse.setOnClickListener {
-            viewModel.onUserAgreementPressed()
+            viewModel.openUserAgreement()
         }
 
         smThemeSwitcher.isChecked = viewModel.getDarkThemeIsEnabled()
 
         smThemeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
-            viewModel.onThemeSwitchedPressed(isChecked)
+            viewModel.themeSwitched(isChecked)
         }
 
         bBack.setOnClickListener {

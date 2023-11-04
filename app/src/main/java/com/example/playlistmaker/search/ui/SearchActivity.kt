@@ -18,13 +18,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.view_model.SearchScreenState
 import com.example.playlistmaker.search.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     companion object {
@@ -33,6 +33,7 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
+    private val viewModel: SearchViewModel by viewModel()
 
     private val searchRunnable = Runnable { searchTrack() }
     private val handler = Handler(Looper.getMainLooper())
@@ -51,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var viewModel: SearchViewModel
     private lateinit var inputEditText: EditText
     private lateinit var llNothingFound: LinearLayout
     private lateinit var llNoInternet: LinearLayout
@@ -72,8 +72,9 @@ class SearchActivity : AppCompatActivity() {
 
         initViews()
 
-        viewModel =
-            ViewModelProvider(this, SearchViewModel.getModelFactory())[SearchViewModel::class.java]
+//        viewModel =
+//            ViewModelProvider(this, SearchViewModel.getModelFactory())[SearchViewModel::class.java]
+
         viewModel.observeState().observe(this) {
             render(it)
         }

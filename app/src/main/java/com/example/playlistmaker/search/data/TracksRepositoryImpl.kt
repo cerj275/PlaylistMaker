@@ -2,6 +2,7 @@ package com.example.playlistmaker.search.data
 
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
+import com.example.playlistmaker.search.domain.api.SearchHistory
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.util.Resource

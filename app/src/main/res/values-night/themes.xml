@@ -15,7 +15,5 @@
         <item name="android:textColorHint">@color/yp_black</item>
         <item name="colorPrimaryVariant">@color/yp_black</item>
         <item name="colorButtonNormal">@color/yp_white</item>
-
-
     </style>
 </resources>
