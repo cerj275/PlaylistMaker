@@ -18,10 +18,12 @@
     <dimen name="margin_102">102dp</dimen>
     <dimen name="margin_120">120dp</dimen>
     <dimen name="main_menu_text_size">22sp</dimen>
-    <dimen name="settings_menu_text_size">16sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="error_text_size">19sp</dimen>
     <dimen name="text_size_22">22sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+    <dimen name="margin_106">106dp</dimen>
+    <dimen name="margin_46">46dp</dimen>
 </resources>

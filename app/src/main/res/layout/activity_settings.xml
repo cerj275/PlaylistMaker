@@ -47,7 +47,7 @@
         android:textAllCaps="false"
         android:textColor="?attr/colorOnSecondary"
         android:textFontWeight="400"
-        android:textSize="@dimen/settings_menu_text_size"
+        android:textSize="@dimen/text_size_16"
         android:thumbTint="?attr/thumbTint"
         android:trackTint="?attr/trackTint"
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
