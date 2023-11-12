@@ -8,25 +8,28 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.media.view_model.FavoritesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class FavoritesFragment : Fragment() {
 
     companion object {
-        fun newInstance() = FavoritesFragment().apply { }
+        fun newInstance() = FavoritesFragment()
     }
 
-    private lateinit var binding: FragmentFavoritesBinding
-    private val favoritesViewModel: FavoritesViewModel by viewModel {
-        parametersOf()
-    }
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
+    private val favoritesViewModel: FavoritesViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
