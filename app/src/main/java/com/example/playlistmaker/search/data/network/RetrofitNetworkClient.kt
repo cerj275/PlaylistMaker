@@ -14,9 +14,13 @@ class RetrofitNetworkClient(private val itunesService: ItunesApi) : NetworkClien
         }
 
         if (dto is TracksSearchRequest) {
-            val resp = itunesService.searchTracks(dto.expression).execute()
-            val body = resp.body() ?: Response()
-            return body.apply { resultCode = resp.code() }
+            try {
+                val resp = itunesService.searchTracks(dto.expression).execute()
+                val body = resp.body() ?: Response()
+                return body.apply { resultCode = resp.code() }
+            } catch (e: Exception) {
+                return Response().apply { resultCode = 400 }
+            }
         } else {
             return Response().apply { resultCode = 400 }
         }

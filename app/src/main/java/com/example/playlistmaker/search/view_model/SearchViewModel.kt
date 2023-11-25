@@ -16,6 +16,13 @@ class SearchViewModel(
     private fun renderState(state: SearchScreenState) {
         stateLiveData.postValue(state)
     }
+    private var lastUnsuccessfulSearch: String = ""
+    private var lastSuccessfulSearch: String = ""
+
+    fun getLastSuccessfulSearch(): String {
+        return lastSuccessfulSearch
+    }
+
 
     fun onTextChanged(searchText: String?) {
         if (searchText.isNullOrEmpty()) {
@@ -26,7 +33,7 @@ class SearchViewModel(
                     )
                 )
             } else {
-                renderState(SearchScreenState.EmptySearch)
+                renderState(SearchScreenState.EmptyScreen)
             }
         }
     }
@@ -48,8 +55,8 @@ class SearchViewModel(
         renderState(SearchScreenState.EmptyScreen)
     }
 
-    fun refreshSearchButton(searchText: String) {
-        searchRequest(searchText)
+    fun refreshSearchButton() {
+        searchRequest(lastUnsuccessfulSearch)
     }
 
     fun onTrackPressed(track: Track) {
@@ -72,9 +79,11 @@ class SearchViewModel(
                     }
                     if (errorMessage != null) {
                         renderState(SearchScreenState.Error(errorMessage))
+                        lastUnsuccessfulSearch = searchText
                     }
                 }
             })
+            lastSuccessfulSearch = searchText
         }
     }
 }

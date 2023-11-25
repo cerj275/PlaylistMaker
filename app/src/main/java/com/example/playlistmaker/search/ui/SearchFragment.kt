@@ -18,6 +18,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.FragmentSearchBinding
@@ -74,7 +75,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -107,7 +108,7 @@ class SearchFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                bClearSearch.visibility = clearButtonVisibility(s)
+                bClearSearch.isVisible = !s.isNullOrEmpty()
                 viewModel.onTextChanged(s.toString())
                 searchDebounce()
             }
@@ -132,7 +133,7 @@ class SearchFragment : Fragment() {
         }
 
         bRefreshSearch.setOnClickListener {
-            viewModel.refreshSearchButton(searchText)
+            viewModel.refreshSearchButton()
         }
         bClearSearchHistory.setOnClickListener {
             viewModel.clearSearchHistory()
@@ -142,6 +143,12 @@ class SearchFragment : Fragment() {
         rvSearchHistoryList.adapter = searchHistoryAdapter
 
         viewModel.setShowingHistoryContent()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(searchRunnable)
+        inputEditText.setText(viewModel.getLastSuccessfulSearch())
     }
 
     private fun initViews() {
@@ -181,14 +188,6 @@ class SearchFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
-    }
-
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
     }
 
     private fun startPlayerActivity(track: Track) {
