@@ -13,7 +13,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.player.view_model.PlayerScreenState
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.SearchActivity.Companion.TRACK_KEY
+import com.example.playlistmaker.search.ui.SearchFragment.Companion.TRACK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat

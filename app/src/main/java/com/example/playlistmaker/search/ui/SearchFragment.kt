@@ -7,32 +7,38 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.view_model.SearchScreenState
 import com.example.playlistmaker.search.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         const val TRACK_KEY = "track_key"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: SearchViewModel by viewModel()
 
     private val searchRunnable = Runnable { searchTrack() }
@@ -63,33 +69,33 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var rvSearch: RecyclerView
     private lateinit var rvSearchHistoryList: RecyclerView
     private lateinit var bClearSearch: ImageView
-    private lateinit var bBackToolBar: ImageView
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initViews()
 
-//        viewModel =
-//            ViewModelProvider(this, SearchViewModel.getModelFactory())[SearchViewModel::class.java]
-
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
-        bBackToolBar.setOnClickListener {
-            finish()
-        }
 
         bClearSearch.setOnClickListener {
             inputEditText.setText("")
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
             trackAdapter.trackList.clear()
             trackAdapter.notifyDataSetChanged()
@@ -136,24 +142,20 @@ class SearchActivity : AppCompatActivity() {
         rvSearchHistoryList.adapter = searchHistoryAdapter
 
         viewModel.setShowingHistoryContent()
-
-
     }
 
-
     private fun initViews() {
-        llNothingFound = findViewById(R.id.linearLayoutNothingFound)
-        llNoInternet = findViewById(R.id.linearLayoutNoInternet)
-        llSearchHistoryList = findViewById(R.id.searchHistoryLinearLayout)
-        flSearch = findViewById(R.id.frameLayoutSearch)
-        bRefreshSearch = findViewById(R.id.buttonRefreshSearch)
-        bClearSearchHistory = findViewById(R.id.clearSearchHistoryButton)
-        rvSearch = findViewById(R.id.recyclerViewSearch)
-        rvSearchHistoryList = findViewById(R.id.recyclerViewSearchHistory)
-        bClearSearch = findViewById(R.id.imageViewClearIcon)
-        inputEditText = findViewById(R.id.editTextSearch)
-        pbSearchLoading = findViewById(R.id.progressBarSearchLoading)
-        bBackToolBar = findViewById<ImageButton>(R.id.buttonBack)
+        llNothingFound = binding.linearLayoutNothingFound
+        llNoInternet = binding.linearLayoutNoInternet
+        llSearchHistoryList = binding.searchHistoryLinearLayout
+        flSearch = binding.frameLayoutSearch
+        bRefreshSearch = binding.buttonRefreshSearch
+        bClearSearchHistory = binding.clearSearchHistoryButton
+        rvSearch = binding.recyclerViewSearch
+        rvSearchHistoryList = binding.recyclerViewSearchHistory
+        bClearSearch = binding.imageViewClearIcon
+        inputEditText = binding.editTextSearch
+        pbSearchLoading = binding.progressBarSearchLoading
 
 
     }
@@ -190,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun startPlayerActivity(track: Track) {
-        val intent = Intent(this, PlayerActivity::class.java)
+        val intent = Intent(requireContext(), PlayerActivity::class.java)
         intent.putExtra(TRACK_KEY, track)
         startActivity(intent)
     }
@@ -267,4 +269,8 @@ class SearchActivity : AppCompatActivity() {
         llSearchHistoryList.visibility = View.GONE
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
