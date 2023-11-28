@@ -147,9 +147,14 @@ class SearchFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacks(searchRunnable)
-        inputEditText.setText(viewModel.getLastSuccessfulSearch())
+        viewModel.onPause()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
+
 
     private fun initViews() {
         llNothingFound = binding.linearLayoutNothingFound

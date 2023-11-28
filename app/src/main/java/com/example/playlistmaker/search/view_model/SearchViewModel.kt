@@ -16,13 +16,21 @@ class SearchViewModel(
     private fun renderState(state: SearchScreenState) {
         stateLiveData.postValue(state)
     }
-    private var lastUnsuccessfulSearch: String = ""
-    private var lastSuccessfulSearch: String = ""
 
-    fun getLastSuccessfulSearch(): String {
-        return lastSuccessfulSearch
+    private var lastUnsuccessfulSearch: String = ""
+    private var isScreenPaused: Boolean = true
+    private var previousScreenState: SearchScreenState? = null
+
+    fun onResume() {
+        isScreenPaused = false
     }
 
+    fun onPause() {
+        isScreenPaused = true
+        previousScreenState?.let {
+            stateLiveData.postValue(it)
+        }
+    }
 
     fun onTextChanged(searchText: String?) {
         if (searchText.isNullOrEmpty()) {
@@ -64,26 +72,28 @@ class SearchViewModel(
     }
 
     fun searchRequest(searchText: String) {
+        previousScreenState = stateLiveData.value
         if (searchText.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
             interactor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (foundTracks != null) {
-                        if (foundTracks.isNotEmpty()) {
-                            renderState(SearchScreenState.SearchContent(foundTracks))
-                        } else {
-                            renderState(
-                                SearchScreenState.EmptySearch
-                            )
+                    if (!isScreenPaused) {
+                        if (foundTracks != null) {
+                            if (foundTracks.isNotEmpty()) {
+                                renderState(SearchScreenState.SearchContent(foundTracks))
+                            } else {
+                                renderState(
+                                    SearchScreenState.EmptySearch
+                                )
+                            }
                         }
-                    }
-                    if (errorMessage != null) {
-                        renderState(SearchScreenState.Error(errorMessage))
-                        lastUnsuccessfulSearch = searchText
+                        if (errorMessage != null) {
+                            renderState(SearchScreenState.Error(errorMessage))
+                            lastUnsuccessfulSearch = searchText
+                        }
                     }
                 }
             })
-            lastSuccessfulSearch = searchText
         }
     }
 }
