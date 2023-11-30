@@ -22,11 +22,11 @@ class SearchViewModel(
 
     fun onResume() {
         isScreenPaused = false
+        setShowingHistoryContent()
     }
 
     fun onPause() {
         isScreenPaused = true
-        setShowingHistoryContent()
     }
 
     fun onTextChanged(searchText: String?) {
