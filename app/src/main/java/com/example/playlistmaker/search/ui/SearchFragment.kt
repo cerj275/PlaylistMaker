@@ -147,6 +147,7 @@ class SearchFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        inputEditText.setText("")
         viewModel.onPause()
     }
 

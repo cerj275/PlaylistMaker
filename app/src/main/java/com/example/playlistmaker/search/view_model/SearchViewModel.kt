@@ -19,7 +19,6 @@ class SearchViewModel(
 
     private var lastUnsuccessfulSearch: String = ""
     private var isScreenPaused: Boolean = true
-    private var previousScreenState: SearchScreenState? = null
 
     fun onResume() {
         isScreenPaused = false
@@ -27,9 +26,7 @@ class SearchViewModel(
 
     fun onPause() {
         isScreenPaused = true
-        previousScreenState?.let {
-            stateLiveData.postValue(it)
-        }
+        setShowingHistoryContent()
     }
 
     fun onTextChanged(searchText: String?) {
@@ -55,6 +52,8 @@ class SearchViewModel(
     fun setShowingHistoryContent() {
         if (interactor.readSearchHistory().isNotEmpty()) {
             renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
+        } else {
+            renderState(SearchScreenState.EmptyScreen)
         }
     }
 
@@ -72,7 +71,6 @@ class SearchViewModel(
     }
 
     fun searchRequest(searchText: String) {
-        previousScreenState = stateLiveData.value
         if (searchText.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
             interactor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
