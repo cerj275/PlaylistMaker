@@ -17,6 +17,7 @@ class SearchViewModel(
         stateLiveData.postValue(state)
     }
 
+    var returnedFromPlayer: Boolean = false
     private var lastUnsuccessfulSearch: String = ""
     private var isScreenPaused: Boolean = true
 
@@ -68,9 +69,11 @@ class SearchViewModel(
 
     fun onTrackPressed(track: Track) {
         interactor.addTrackToSearchHistory(track)
+        returnedFromPlayer = true
     }
 
     fun searchRequest(searchText: String) {
+        returnedFromPlayer = false
         if (searchText.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
             interactor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {

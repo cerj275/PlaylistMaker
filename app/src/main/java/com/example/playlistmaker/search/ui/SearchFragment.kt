@@ -148,11 +148,17 @@ class SearchFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+
     }
+
     override fun onResume() {
         super.onResume()
-        binding.editTextSearch.text.clear()
-        viewModel.onResume()
+        if (viewModel.returnedFromPlayer == false) {
+            inputEditText.text.clear()
+            viewModel.onResume()
+        }
+        viewModel.returnedFromPlayer = false
+
     }
 
     private fun initViews() {
