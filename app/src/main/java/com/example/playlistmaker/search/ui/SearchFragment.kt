@@ -153,11 +153,11 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.returnedFromPlayer == false) {
+        if (!viewModel.getReturnedFromPlayer()) {
             inputEditText.text.clear()
             viewModel.onResume()
         }
-        viewModel.returnedFromPlayer = false
+        viewModel.setReturnedFromPlayer(false)
 
     }
 

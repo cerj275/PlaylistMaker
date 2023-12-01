@@ -17,9 +17,16 @@ class SearchViewModel(
         stateLiveData.postValue(state)
     }
 
-    var returnedFromPlayer: Boolean = false
+    private var returnedFromPlayer: Boolean = false
     private var lastUnsuccessfulSearch: String = ""
     private var isScreenPaused: Boolean = true
+    fun setReturnedFromPlayer(boolean: Boolean) {
+        returnedFromPlayer = boolean
+    }
+
+    fun getReturnedFromPlayer(): Boolean{
+        return returnedFromPlayer
+    }
 
     fun onResume() {
         isScreenPaused = false
