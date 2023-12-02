@@ -17,6 +17,26 @@ class SearchViewModel(
         stateLiveData.postValue(state)
     }
 
+    private var returnedFromPlayer: Boolean = false
+    private var lastUnsuccessfulSearch: String = ""
+    private var isScreenPaused: Boolean = true
+    fun setReturnedFromPlayer(boolean: Boolean) {
+        returnedFromPlayer = boolean
+    }
+
+    fun getReturnedFromPlayer(): Boolean{
+        return returnedFromPlayer
+    }
+
+    fun onResume() {
+        isScreenPaused = false
+        setShowingHistoryContent()
+    }
+
+    fun onPause() {
+        isScreenPaused = true
+    }
+
     fun onTextChanged(searchText: String?) {
         if (searchText.isNullOrEmpty()) {
             if (interactor.readSearchHistory().isNotEmpty()) {
@@ -26,7 +46,7 @@ class SearchViewModel(
                     )
                 )
             } else {
-                renderState(SearchScreenState.EmptySearch)
+                renderState(SearchScreenState.EmptyScreen)
             }
         }
     }
@@ -40,6 +60,8 @@ class SearchViewModel(
     fun setShowingHistoryContent() {
         if (interactor.readSearchHistory().isNotEmpty()) {
             renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
+        } else {
+            renderState(SearchScreenState.EmptyScreen)
         }
     }
 
@@ -48,30 +70,35 @@ class SearchViewModel(
         renderState(SearchScreenState.EmptyScreen)
     }
 
-    fun refreshSearchButton(searchText: String) {
-        searchRequest(searchText)
+    fun refreshSearchButton() {
+        searchRequest(lastUnsuccessfulSearch)
     }
 
     fun onTrackPressed(track: Track) {
         interactor.addTrackToSearchHistory(track)
+        returnedFromPlayer = true
     }
 
     fun searchRequest(searchText: String) {
+        returnedFromPlayer = false
         if (searchText.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
             interactor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (foundTracks != null) {
-                        if (foundTracks.isNotEmpty()) {
-                            renderState(SearchScreenState.SearchContent(foundTracks))
-                        } else {
-                            renderState(
-                                SearchScreenState.EmptySearch
-                            )
+                    if (!isScreenPaused) {
+                        if (foundTracks != null) {
+                            if (foundTracks.isNotEmpty()) {
+                                renderState(SearchScreenState.SearchContent(foundTracks))
+                            } else {
+                                renderState(
+                                    SearchScreenState.EmptySearch
+                                )
+                            }
                         }
-                    }
-                    if (errorMessage != null) {
-                        renderState(SearchScreenState.Error(errorMessage))
+                        if (errorMessage != null) {
+                            renderState(SearchScreenState.Error(errorMessage))
+                            lastUnsuccessfulSearch = searchText
+                        }
                     }
                 }
             })

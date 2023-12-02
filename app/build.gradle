@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.example.playlistmaker'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.playlistmaker"
@@ -38,6 +38,9 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.5'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation "io.insert-koin:koin-android:3.3.2"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
     implementation 'androidx.activity:activity-ktx:1.6.1'
