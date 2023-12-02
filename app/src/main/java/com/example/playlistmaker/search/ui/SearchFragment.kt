@@ -158,7 +158,6 @@ class SearchFragment : Fragment() {
             viewModel.onResume()
         }
         viewModel.setReturnedFromPlayer(false)
-
     }
 
     private fun initViews() {
