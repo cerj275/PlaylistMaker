@@ -10,6 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.player.view_model.PlayerScreenState.Companion.PLAY
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.TRACK_KEY
@@ -19,9 +20,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-    companion object {
-        private const val PLAY = "PLAY"
-    }
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)

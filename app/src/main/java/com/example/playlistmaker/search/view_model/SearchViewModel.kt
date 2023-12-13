@@ -14,7 +14,7 @@ class SearchViewModel(
     private val interactor: TracksInteractor
 ) : ViewModel() {
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY = 500L
 
     }
 
@@ -70,15 +70,12 @@ class SearchViewModel(
     }
 
     fun searchDebounce(searchText: String) {
-        if (lastSearchText == searchText) {
-            return
-        } else {
-            lastSearchText == searchText
-            searchJob?.cancel()
-            searchJob = viewModelScope.launch {
-                delay(SEARCH_DEBOUNCE_DELAY)
-                searchRequest(searchText)
-            }
+        if (lastSearchText == searchText) return
+        lastSearchText == searchText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(searchText)
         }
     }
 
