@@ -3,14 +3,25 @@ package com.example.playlistmaker.search.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val interactor: TracksInteractor
 ) : ViewModel() {
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 500L
+
+    }
 
     private val stateLiveData = MutableLiveData<SearchScreenState>()
+    private var searchJob: Job? = null
+    private var lastSearchText: String? = null
+
 
     fun observeState(): LiveData<SearchScreenState> = stateLiveData
     private fun renderState(state: SearchScreenState) {
@@ -19,22 +30,16 @@ class SearchViewModel(
 
     private var returnedFromPlayer: Boolean = false
     private var lastUnsuccessfulSearch: String = ""
-    private var isScreenPaused: Boolean = true
     fun setReturnedFromPlayer(boolean: Boolean) {
         returnedFromPlayer = boolean
     }
 
-    fun getReturnedFromPlayer(): Boolean{
+    fun getReturnedFromPlayer(): Boolean {
         return returnedFromPlayer
     }
 
     fun onResume() {
-        isScreenPaused = false
         setShowingHistoryContent()
-    }
-
-    fun onPause() {
-        isScreenPaused = true
     }
 
     fun onTextChanged(searchText: String?) {
@@ -45,11 +50,10 @@ class SearchViewModel(
                         interactor.readSearchHistory()
                     )
                 )
-            } else {
-                renderState(SearchScreenState.EmptyScreen)
             }
         }
     }
+
 
     fun onFocusChanged(hasFocus: Boolean, searchText: String) {
         if (hasFocus && searchText.isEmpty() && interactor.readSearchHistory().isNotEmpty()) {
@@ -62,6 +66,16 @@ class SearchViewModel(
             renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
         } else {
             renderState(SearchScreenState.EmptyScreen)
+        }
+    }
+
+    fun searchDebounce(searchText: String) {
+        if (lastSearchText == searchText) return
+        lastSearchText == searchText
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(searchText)
         }
     }
 
@@ -83,10 +97,13 @@ class SearchViewModel(
         returnedFromPlayer = false
         if (searchText.isNotEmpty()) {
             renderState(SearchScreenState.Loading)
-            interactor.searchTracks(searchText, object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (!isScreenPaused) {
-                        if (foundTracks != null) {
+            viewModelScope.launch {
+                interactor
+                    .searchTracks(searchText)
+                    .collect { pair ->
+                        val foundTracks = ArrayList<Track>()
+                        if (pair.first != null) {
+                            foundTracks.addAll(pair.first!!)
                             if (foundTracks.isNotEmpty()) {
                                 renderState(SearchScreenState.SearchContent(foundTracks))
                             } else {
@@ -95,13 +112,12 @@ class SearchViewModel(
                                 )
                             }
                         }
-                        if (errorMessage != null) {
-                            renderState(SearchScreenState.Error(errorMessage))
+                        if (pair.second != null) {
+                            renderState(SearchScreenState.Error(pair.second!!))
                             lastUnsuccessfulSearch = searchText
                         }
                     }
-                }
-            })
+            }
         }
     }
 }

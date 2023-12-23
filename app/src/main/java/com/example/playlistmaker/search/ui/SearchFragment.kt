@@ -3,8 +3,6 @@ package com.example.playlistmaker.search.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -20,12 +18,14 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.view_model.SearchScreenState
 import com.example.playlistmaker.search.view_model.SearchViewModel
+import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -33,7 +33,6 @@ class SearchFragment : Fragment() {
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         const val TRACK_KEY = "track_key"
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
@@ -42,22 +41,14 @@ class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
 
-    private val searchRunnable = Runnable { searchTrack() }
-    private val handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
     private var searchText: String = ""
     private val trackAdapter = TrackAdapter {
-        if (clickDebounce()) {
-            viewModel.onTrackPressed(it)
-            startPlayerActivity(it)
-        }
+        onTrackClickDebounce(it)
     }
     private val searchHistoryAdapter = TrackAdapter {
-        if (clickDebounce()) {
-            viewModel.onTrackPressed(it)
-            startPlayerActivity(it)
-        }
+        onTrackClickDebounce(it)
     }
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     private lateinit var inputEditText: EditText
     private lateinit var llNothingFound: LinearLayout
@@ -89,6 +80,15 @@ class SearchFragment : Fragment() {
             render(it)
         }
 
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            viewModel.onTrackPressed(track)
+            startPlayerActivity(track)
+        }
+
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
@@ -110,7 +110,7 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 bClearSearch.isVisible = !s.isNullOrEmpty()
                 viewModel.onTextChanged(s.toString())
-                searchDebounce()
+                viewModel.searchDebounce(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -143,12 +143,6 @@ class SearchFragment : Fragment() {
         rvSearchHistoryList.adapter = searchHistoryAdapter
 
         viewModel.setShowingHistoryContent()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-
     }
 
     override fun onResume() {
@@ -203,20 +197,6 @@ class SearchFragment : Fragment() {
         val intent = Intent(requireContext(), PlayerActivity::class.java)
         intent.putExtra(TRACK_KEY, track)
         startActivity(intent)
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     private fun showProgressBar() {

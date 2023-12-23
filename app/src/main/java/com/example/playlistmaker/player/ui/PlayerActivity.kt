@@ -10,7 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.player.view_model.PlayerScreenState
+import com.example.playlistmaker.player.view_model.PlayerScreenState.Companion.PLAY
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.TRACK_KEY
@@ -20,9 +20,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-    companion object {
-        private const val ZERO_PLAYBACK_TIME_VALUE = "00:00"
-    }
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
@@ -64,7 +61,7 @@ class PlayerActivity : AppCompatActivity() {
         tvDuration.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
-        if (track.releaseDate.isNullOrEmpty()){
+        if (track.releaseDate.isNullOrEmpty()) {
             tvYear.text = ""
         } else {
             tvYear.text = track.releaseDate?.substring(0, 4)
@@ -80,7 +77,9 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         viewModel.observeState().observe(this) {
-            render(it)
+            ivPlayButton.isEnabled = it.isPlayButtonEnabled
+            tvPlayBackTime.text = it.progress
+            setPlayButtonImage(it.buttonText)
         }
 
         viewModel.preparePlayer()
@@ -114,39 +113,21 @@ class PlayerActivity : AppCompatActivity() {
         ivPlayButton = findViewById(R.id.play_button)
     }
 
-    private fun render(state: PlayerScreenState) {
-        when (state) {
-            is PlayerScreenState.DefaultScreenState -> showDefaultScreen()
-            is PlayerScreenState.PreparedScreenState -> showPreparedScreen()
-            is PlayerScreenState.PlayingScreenState -> showPlayingScreen()
-            is PlayerScreenState.PauseScreenState -> showPauseScreen()
-            is PlayerScreenState.TimerState -> setPlaybackTime(state.playbackTimer)
+    private fun setPlayButtonImage(buttonText: String) {
+        if (buttonText == PLAY) {
+            ivPlayButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_play
+                )
+            )
+        } else {
+            ivPlayButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_pause
+                )
+            )
         }
-    }
-
-    private fun showDefaultScreen() {
-        ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
-        ivPlayButton.isEnabled = false
-    }
-
-    private fun showPreparedScreen() {
-        ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
-        ivPlayButton.isEnabled = true
-        tvPlayBackTime.text = ZERO_PLAYBACK_TIME_VALUE
-    }
-
-    private fun showPlayingScreen() {
-        ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_pause))
-        ivPlayButton.isEnabled = true
-    }
-
-    private fun showPauseScreen() {
-        ivPlayButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play))
-        ivPlayButton.isEnabled = true
-    }
-
-    private fun setPlaybackTime(time: String) {
-        tvPlayBackTime.text = time
-
     }
 }
