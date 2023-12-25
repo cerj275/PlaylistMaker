@@ -38,6 +38,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var tvCountry: TextView
     private lateinit var tvPlayBackTime: TextView
     private lateinit var ivPlayButton: ImageView
+    private lateinit var ivFavoriteButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +82,13 @@ class PlayerActivity : AppCompatActivity() {
             tvPlayBackTime.text = it.progress
             setPlayButtonImage(it.buttonText)
         }
+        viewModel.observeFavorite().observe(this) { isFavorite ->
+            setFavoriteButtonImage(isFavorite)
+        }
+
+        ivFavoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
 
         viewModel.preparePlayer()
         ivPlayButton.setOnClickListener {
@@ -111,6 +119,7 @@ class PlayerActivity : AppCompatActivity() {
         tvPlayBackTime = findViewById(R.id.playback_time)
         ibBackButton = findViewById(R.id.buttonBack)
         ivPlayButton = findViewById(R.id.play_button)
+        ivFavoriteButton = findViewById(R.id.favorite_button)
     }
 
     private fun setPlayButtonImage(buttonText: String) {
@@ -126,6 +135,22 @@ class PlayerActivity : AppCompatActivity() {
                 AppCompatResources.getDrawable(
                     this,
                     R.drawable.ic_pause
+                )
+            )
+        }
+    }
+
+    private fun setFavoriteButtonImage(isFavorite: Boolean) {
+        if (isFavorite) {
+            ivFavoriteButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this, R.drawable.ic_not_favorite
+                )
+            )
+        } else {
+            ivFavoriteButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this, R.drawable.ic_favorite
                 )
             )
         }

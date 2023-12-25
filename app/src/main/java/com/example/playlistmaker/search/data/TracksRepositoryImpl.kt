@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.SearchHistory
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: SearchHistory
+    private val localStorage: SearchHistory,
+    private val appDatabase: AppDatabase
 ) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
@@ -19,8 +21,8 @@ class TracksRepositoryImpl(
             -1 -> {
                 emit(Resource.Error("Проверьте подключение к интернету"))
             }
-
             200 -> {
+                val favoriteTracksId = appDatabase.favoriteTrackDao().getFavoriteTracksId()
                 with(response as TracksSearchResponse) {
                     val data = results.map {
                         Track(
@@ -33,7 +35,8 @@ class TracksRepositoryImpl(
                             it.releaseDate,
                             it.primaryGenreName,
                             it.country,
-                            it.previewUrl
+                            it.previewUrl,
+                            favoriteTracksId.contains(it.trackId)
                         )
                     }
                     emit(Resource.Success(data))
@@ -46,8 +49,12 @@ class TracksRepositoryImpl(
         }
     }
 
-    override fun readSearchHistory(): ArrayList<Track> {
-        return localStorage.readSearchHistory()
+    override fun readSearchHistory(): Flow<List<Track>> = flow {
+        val searchHistory = localStorage.readSearchHistory()
+        val favoriteTracksId = appDatabase.favoriteTrackDao().getFavoriteTracksId()
+        emit(searchHistory.map {
+            it.copy(isFavorite = favoriteTracksId.contains(it.trackId))
+        })
     }
 
     override fun addTrackToSearchHistory(track: Track) {

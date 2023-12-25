@@ -23,7 +23,7 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
         }
     }
 
-    override fun readSearchHistory(): ArrayList<Track> {
+    override fun readSearchHistory(): Flow<List<Track>> {
         return repository.readSearchHistory()
     }
 

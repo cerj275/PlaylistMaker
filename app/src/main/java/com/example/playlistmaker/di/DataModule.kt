@@ -3,6 +3,8 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.ConnectivityManager
+import androidx.room.Room
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryImpl
 import com.example.playlistmaker.search.data.network.ItunesApi
@@ -49,5 +51,9 @@ val dataModule = module {
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
     }
 }
