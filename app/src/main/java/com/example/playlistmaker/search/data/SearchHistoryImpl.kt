@@ -6,7 +6,8 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryImpl(private val sharedPrefs: SharedPreferences, private val gson: Gson) : SearchHistory {
+class SearchHistoryImpl(private val sharedPrefs: SharedPreferences, private val gson: Gson) :
+    SearchHistory {
 
     companion object {
         const val SEARCH_HISTORY = "SEARCH_HISTORY"
@@ -27,8 +28,7 @@ class SearchHistoryImpl(private val sharedPrefs: SharedPreferences, private val 
 
     override fun addTrackToSearchHistory(track: Track) {
         val searchHistoryTrackList = readSearchHistory()
-        if (searchHistoryTrackList.contains(track)) {
-            searchHistoryTrackList.remove(track)
+        if (searchHistoryTrackList.removeIf { it.trackId == track.trackId }) {
             searchHistoryTrackList.add(0, track)
         } else {
             if (searchHistoryTrackList.size == 10) {

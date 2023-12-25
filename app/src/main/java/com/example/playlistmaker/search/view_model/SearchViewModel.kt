@@ -15,13 +15,11 @@ class SearchViewModel(
 ) : ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 500L
-
     }
 
     private val stateLiveData = MutableLiveData<SearchScreenState>()
     private var searchJob: Job? = null
     private var lastSearchText: String? = null
-
 
     fun observeState(): LiveData<SearchScreenState> = stateLiveData
     private fun renderState(state: SearchScreenState) {
@@ -44,28 +42,25 @@ class SearchViewModel(
 
     fun onTextChanged(searchText: String?) {
         if (searchText.isNullOrEmpty()) {
-            if (interactor.readSearchHistory().isNotEmpty()) {
-                renderState(
-                    SearchScreenState.HistoryContent(
-                        interactor.readSearchHistory()
-                    )
-                )
-            }
+            setShowingHistoryContent()
         }
     }
 
-
     fun onFocusChanged(hasFocus: Boolean, searchText: String) {
-        if (hasFocus && searchText.isEmpty() && interactor.readSearchHistory().isNotEmpty()) {
-            renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
+        if (hasFocus && searchText.isEmpty()) {
+            setShowingHistoryContent()
         }
     }
 
     fun setShowingHistoryContent() {
-        if (interactor.readSearchHistory().isNotEmpty()) {
-            renderState(SearchScreenState.HistoryContent(interactor.readSearchHistory()))
-        } else {
-            renderState(SearchScreenState.EmptyScreen)
+        viewModelScope.launch {
+            interactor.readSearchHistory().collect {
+                if (it.isNotEmpty()) {
+                    renderState(SearchScreenState.HistoryContent(it))
+                } else {
+                    renderState(SearchScreenState.EmptyScreen)
+                }
+            }
         }
     }
 
