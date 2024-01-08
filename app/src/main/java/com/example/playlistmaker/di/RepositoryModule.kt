@@ -2,7 +2,7 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.data.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.media.data.converters.FavoriteTrackDbConverter
-import com.example.playlistmaker.media.domain.db.FavoriteTracksRepository
+import com.example.playlistmaker.media.domain.api.FavoriteTracksRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.data.TracksRepositoryImpl

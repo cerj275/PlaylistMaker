@@ -13,6 +13,7 @@ import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.example.playlistmaker.media.view_model.FavoriteTracksScreenState
 import com.example.playlistmaker.media.view_model.FavoriteTracksViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerActivity.Companion.TRACK_KEY
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.TrackAdapter
 import com.example.playlistmaker.utils.debounce
@@ -23,7 +24,6 @@ class FavoriteTracksFragment : Fragment() {
     companion object {
         fun newInstance() = FavoriteTracksFragment()
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        const val TRACK_KEY = "track_key"
     }
 
     private var _binding: FragmentFavoriteTracksBinding? = null
@@ -52,7 +52,6 @@ class FavoriteTracksFragment : Fragment() {
         rvFavoriteTracksList = binding.recyclerViewFavoriteTracks
         llEmptyFavoriteTracks = binding.linearLayoutEmptyFavoriteTracks
 
-        favoriteTracksViewModel.fillData()
 
         favoriteTracksViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)

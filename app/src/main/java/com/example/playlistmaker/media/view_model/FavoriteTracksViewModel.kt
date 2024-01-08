@@ -4,14 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.domain.db.FavoriteTracksInteractor
+import com.example.playlistmaker.media.domain.api.FavoriteTracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.launch
 
 class FavoriteTracksViewModel(private val interactor: FavoriteTracksInteractor) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoriteTracksScreenState>()
-    fun  observeState(): LiveData<FavoriteTracksScreenState> = stateLiveData
+    fun observeState(): LiveData<FavoriteTracksScreenState> = stateLiveData
+
+    init {
+        fillData()
+    }
 
     fun fillData() {
         viewModelScope.launch {
