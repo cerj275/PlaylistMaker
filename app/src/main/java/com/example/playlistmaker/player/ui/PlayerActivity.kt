@@ -13,13 +13,15 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.player.view_model.PlayerScreenState.Companion.PLAY
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.SearchFragment.Companion.TRACK_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
+    companion object {
+        const val TRACK_KEY = "track_key"
+    }
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
@@ -38,6 +40,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var tvCountry: TextView
     private lateinit var tvPlayBackTime: TextView
     private lateinit var ivPlayButton: ImageView
+    private lateinit var ivFavoriteButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +84,13 @@ class PlayerActivity : AppCompatActivity() {
             tvPlayBackTime.text = it.progress
             setPlayButtonImage(it.buttonText)
         }
+        viewModel.observeFavorite().observe(this) { isFavorite ->
+            setFavoriteButtonImage(isFavorite)
+        }
+
+        ivFavoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
 
         viewModel.preparePlayer()
         ivPlayButton.setOnClickListener {
@@ -111,6 +121,7 @@ class PlayerActivity : AppCompatActivity() {
         tvPlayBackTime = findViewById(R.id.playback_time)
         ibBackButton = findViewById(R.id.buttonBack)
         ivPlayButton = findViewById(R.id.play_button)
+        ivFavoriteButton = findViewById(R.id.favorite_button)
     }
 
     private fun setPlayButtonImage(buttonText: String) {
@@ -126,6 +137,22 @@ class PlayerActivity : AppCompatActivity() {
                 AppCompatResources.getDrawable(
                     this,
                     R.drawable.ic_pause
+                )
+            )
+        }
+    }
+
+    private fun setFavoriteButtonImage(isFavorite: Boolean) {
+        if (isFavorite) {
+            ivFavoriteButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this, R.drawable.ic_not_favorite
+                )
+            )
+        } else {
+            ivFavoriteButton.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this, R.drawable.ic_favorite
                 )
             )
         }
