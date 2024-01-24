@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.api.FavoriteTracksInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
+import com.example.playlistmaker.media.view_model.PlayListsState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
@@ -26,6 +28,7 @@ class PlayerViewModel(
     private var timerJob: Job? = null
     private val stateLiveData = MutableLiveData<PlayerScreenState>()
     private val favoriteLiveData = MutableLiveData<Boolean>()
+    private val playlistsStateLiveData = MutableLiveData<PlayListsState>()
 
     init {
         stateLiveData.value = PlayerScreenState.DefaultScreenState()
@@ -34,6 +37,8 @@ class PlayerViewModel(
 
     fun observeState(): LiveData<PlayerScreenState> = stateLiveData
     fun observeFavorite(): LiveData<Boolean> = favoriteLiveData
+    fun observePlaylists(): LiveData<PlayListsState> = playlistsStateLiveData
+
 
     private fun renderState(playerState: PlayerScreenState) {
         stateLiveData.postValue(playerState)
@@ -114,5 +119,9 @@ class PlayerViewModel(
                 track.isFavorite = true
             }
         }
+    }
+
+    fun onPlaylistClicked(playlist: Playlist) {
+
     }
 }

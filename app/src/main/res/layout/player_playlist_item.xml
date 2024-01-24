@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="?attr/colorSecondary">
+
+    <ImageView
+        android:id="@+id/imageViewPlayerPlaylistCover"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginVertical="@dimen/margin_8"
+        android:layout_marginStart="13dp"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_placeholder" />
+
+    <TextView
+        android:id="@+id/textViewPlayerPlaylistName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_66"
+        android:layout_marginTop="@dimen/margin_14"
+        android:layout_marginEnd="@dimen/margin_44"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_regular"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="@dimen/text_size_16"
+        tools:text="Название альбома" />
+
+    <TextView
+        android:id="@+id/textViewPlayerNumberOfTracks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="@dimen/margin_66"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="@dimen/margin_44"
+        android:layout_marginBottom="@dimen/margin_14"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Кол-во треков"
+        android:textSize="11sp"/>
+
+</androidx.cardview.widget.CardView>

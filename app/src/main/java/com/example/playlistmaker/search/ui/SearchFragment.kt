@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,9 +18,11 @@ import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.view_model.SearchScreenState
 import com.example.playlistmaker.search.view_model.SearchViewModel
@@ -86,7 +87,10 @@ class SearchFragment : Fragment() {
             false
         ) { track ->
             viewModel.onTrackPressed(track)
-            startPlayerActivity(track)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(track.toString())
+            )
         }
 
         if (savedInstanceState != null) {
@@ -193,11 +197,11 @@ class SearchFragment : Fragment() {
         outState.putString(SEARCH_TEXT, searchText)
     }
 
-    private fun startPlayerActivity(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra(TRACK_KEY, track)
-        startActivity(intent)
-    }
+//    private fun startPlayerActivity(track: Track) {
+//        val intent = Intent(requireContext(), PlayerFragment::class.java)
+//        intent.putExtra(TRACK_KEY, track)
+//        startActivity(intent)
+//    }
 
     private fun showProgressBar() {
         flSearch.visibility = View.VISIBLE
