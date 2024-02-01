@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import androidx.room.Room
+import com.example.playlistmaker.media.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryImpl
@@ -35,10 +36,10 @@ val dataModule = module {
         RetrofitNetworkClient(get())
     }
 
-    single { androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager}
+    single { androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
 
     single<SearchHistory> {
-        SearchHistoryImpl(get(),get())
+        SearchHistoryImpl(get(), get())
     }
 
     single {
@@ -56,4 +57,6 @@ val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
     }
+
+    factory { PlaylistDbConverter(get()) }
 }

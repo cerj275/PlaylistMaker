@@ -20,5 +20,5 @@ interface FavoriteTrackDao {
     suspend fun getFavoriteTracks(): List<FavoriteTrackEntity>
 
     @Query("SELECT trackId FROM favorites_table")
-    suspend fun getFavoriteTracksId(): List<Int>
+    suspend fun getFavoriteTracksId(): List<String>
 }

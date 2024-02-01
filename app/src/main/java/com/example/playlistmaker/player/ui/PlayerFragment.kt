@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -22,6 +23,7 @@ import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.view_model.PlayListsState
 import com.example.playlistmaker.player.view_model.PlayerScreenState.Companion.PLAY
 import com.example.playlistmaker.player.view_model.PlayerViewModel
+import com.example.playlistmaker.player.view_model.TrackInPlaylistState
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -40,8 +42,8 @@ class PlayerFragment : Fragment() {
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
-    private val playlistsAdapter = PlayerBottomSheetAdapter {
-        viewModel.onPlaylistClicked(it)
+    private val playlistsAdapter = PlayerBottomSheetAdapter { playlist ->
+        viewModel.checkTrackInPlaylist(track, playlist)
     }
 
     private lateinit var track: Track
@@ -146,10 +148,29 @@ class PlayerFragment : Fragment() {
             when (state) {
                 is PlayListsState.Empty -> {}
                 is PlayListsState.Content -> {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                    vOverlay.isVisible = true
                     showContent(state.playlists)
 
+                }
+            }
+        }
+
+        viewModel.observeTrackInPlaylist().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is TrackInPlaylistState.Contained -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ("Трек уже добавлен в плейлист ${state.playlist.name}"),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                is TrackInPlaylistState.Added -> {
+                    Toast.makeText(
+                        requireContext(),
+                        ("Добавлено в плейлист ${state.playlist.name}"),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         }
@@ -166,6 +187,7 @@ class PlayerFragment : Fragment() {
 
         ivAddToPlaylist.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            viewModel.addToPlaylist()
         }
 
         bCreatePlaylist.setOnClickListener {
@@ -243,5 +265,10 @@ class PlayerFragment : Fragment() {
         playlistsAdapter.playlists.clear()
         playlistsAdapter.playlists.addAll(playlists)
         playlistsAdapter.notifyDataSetChanged()
+    }
+
+    override fun onResume() {
+        viewModel.fillData()
+        super.onResume()
     }
 }

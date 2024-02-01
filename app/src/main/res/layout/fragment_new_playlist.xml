@@ -58,7 +58,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_16"
         android:layout_marginTop="32dp"
-        android:textColorHint="@color/yp_black"
         app:hintTextColor="@color/yp_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +81,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColorHint="@color/yp_black"
         app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="1dp"
         app:hintTextColor="@color/yp_blue"
@@ -102,7 +100,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonCreateNewPlaylist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

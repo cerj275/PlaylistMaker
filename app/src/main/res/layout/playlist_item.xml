@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
@@ -8,19 +9,31 @@
 
     <ImageView
         android:id="@+id/imageViewPlaylistCover"
-        android:layout_width="312dp"
-        android:layout_height="312dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_placeholder" />
 
     <TextView
         android:id="@+id/textViewPlaylistName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_4" />
+        android:layout_marginTop="@dimen/margin_4"
+        android:fontFamily="@font/ys_display_regular"
+        android:textColor="?attr/colorOnSecondary"
+        android:textFontWeight="400"
+        android:textSize="12sp"
+        tools:text="Название" />
 
     <TextView
         android:id="@+id/textViewNumberOfTracks"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:textColor="?attr/colorOnSecondary"
+        android:textFontWeight="400"
+        android:textSize="12sp"
+        tools:text="Количество треков" />
 
 </LinearLayout>
