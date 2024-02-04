@@ -20,7 +20,7 @@ class PlayerBottomSheetViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         Glide.with(ivCover)
             .load(playlist.coverUri)
             .centerCrop()
-            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_small_cover)))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_cover)))
             .placeholder(R.drawable.ic_placeholder)
             .into(ivCover)
         tvName.text = playlist.name

@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
-    android:layout_marginBottom="16dp"
-    android:orientation="vertical">
+    android:layout_marginBottom="12dp"
+    android:orientation="vertical"
+    android:padding="4dp">
 
-    <ImageView
-        android:id="@+id/imageViewPlaylistCover"
-        android:layout_width="160dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="160dp"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_placeholder" />
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/imageViewPlaylistCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_placeholder" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/textViewPlaylistName"
+        style="@style/PlaylistTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_4"
-        android:fontFamily="@font/ys_display_regular"
-        android:textColor="?attr/colorOnSecondary"
-        android:textFontWeight="400"
-        android:textSize="12sp"
         tools:text="Название" />
 
     <TextView
         android:id="@+id/textViewNumberOfTracks"
+        style="@style/PlaylistTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/ys_display_regular"
-        android:textColor="?attr/colorOnSecondary"
-        android:textFontWeight="400"
-        android:textSize="12sp"
         tools:text="Количество треков" />
 
 </LinearLayout>

@@ -197,12 +197,6 @@ class SearchFragment : Fragment() {
         outState.putString(SEARCH_TEXT, searchText)
     }
 
-//    private fun startPlayerActivity(track: Track) {
-//        val intent = Intent(requireContext(), PlayerFragment::class.java)
-//        intent.putExtra(TRACK_KEY, track)
-//        startActivity(intent)
-//    }
-
     private fun showProgressBar() {
         flSearch.visibility = View.VISIBLE
         rvSearch.visibility = View.GONE

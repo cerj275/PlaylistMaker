@@ -1,6 +1,5 @@
 package com.example.playlistmaker.media.ui
 
-import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -9,6 +8,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -59,6 +59,8 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
         initViews()
 
         if (etPlaylistName.text!!.isEmpty()) {
@@ -78,17 +80,17 @@ class NewPlaylistFragment : Fragment() {
                 }
             }
 
-        val requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                if (isGranted) {
-                    pickMedia.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-            }
+//        val requestPermissionLauncher =
+//            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+//                if (isGranted) {
+//                    pickMedia.launch(
+//                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+//                    )
+//                }
+//            }
 
         ivAddCover.setOnClickListener {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         ibBack.setOnClickListener {
@@ -106,7 +108,7 @@ class NewPlaylistFragment : Fragment() {
                 )
             )
             Toast.makeText(
-                requireContext(), "Плейлсит ${binding.editTextPlaylistName.text} создан",
+                requireContext(), resources.getString(R.string.playlist_created, etPlaylistName.text),
                 Toast.LENGTH_SHORT
             ).show()
             findNavController().navigateUp()
@@ -164,6 +166,12 @@ class NewPlaylistFragment : Fragment() {
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
         return file.toUri()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        _binding = null
     }
 
     companion object {

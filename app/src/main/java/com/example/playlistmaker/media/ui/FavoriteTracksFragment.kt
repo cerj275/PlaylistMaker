@@ -82,12 +82,6 @@ class FavoriteTracksFragment : Fragment() {
         _binding = null
     }
 
-//    private fun startPlayerActivity(track: Track) {
-//        val intent = Intent(requireContext(), PlayerFragment::class.java)
-//        intent.putExtra(TRACK_KEY, track)
-//        startActivity(intent)
-//    }
-
     private fun render(state: FavoriteTracksScreenState) {
         when (state) {
             is FavoriteTracksScreenState.Content -> showFavoriteTracks(state.tracks)

@@ -35,7 +35,7 @@ import java.util.Locale
 
 class PlayerFragment : Fragment() {
     companion object {
-        const val TRACK_KEY = "track_key"
+        private const val TRACK_KEY = "track_key"
         fun createArgs(trackJson: String): Bundle = bundleOf(TRACK_KEY to trackJson)
     }
 
@@ -129,7 +129,6 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                vOverlay.alpha = slideOffset
             }
         })
 
@@ -159,7 +158,7 @@ class PlayerFragment : Fragment() {
                 is TrackInPlaylistState.Contained -> {
                     Toast.makeText(
                         requireContext(),
-                        ("Трек уже добавлен в плейлист ${state.playlist.name}"),
+                        (getString(R.string.track_contained, state.playlist.name)),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -167,7 +166,7 @@ class PlayerFragment : Fragment() {
                 is TrackInPlaylistState.Added -> {
                     Toast.makeText(
                         requireContext(),
-                        ("Добавлено в плейлист ${state.playlist.name}"),
+                        (getString(R.string.track_added, state.playlist.name)),
                         Toast.LENGTH_SHORT
                     ).show()
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -186,8 +185,8 @@ class PlayerFragment : Fragment() {
 
 
         ivAddToPlaylist.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
             viewModel.addToPlaylist()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         bCreatePlaylist.setOnClickListener {

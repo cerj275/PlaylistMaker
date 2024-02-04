@@ -306,7 +306,7 @@
         android:background="@drawable/bg_bottom_sheet"
         android:orientation="vertical"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="230dp"
+        app:behavior_peekHeight="505dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -324,6 +324,7 @@
             android:gravity="center"
             android:paddingHorizontal="@dimen/margin_16"
             android:text="@string/add_to_playlist"
+            android:textColor="?attr/colorOnSecondary"
             android:textSize="@dimen/text_size_19" />
 
         <Button
