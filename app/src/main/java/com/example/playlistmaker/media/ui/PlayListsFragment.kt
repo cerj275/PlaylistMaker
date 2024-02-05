@@ -24,6 +24,7 @@ class PlayListsFragment : Fragment() {
     companion object {
         fun newInstance() = PlayListsFragment()
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SPAN_COUNT = 2
     }
 
 
@@ -58,7 +59,7 @@ class PlayListsFragment : Fragment() {
         }
 
         binding.recyclerViewPlaylists.layoutManager =
-            GridLayoutManager(requireContext(), 2)
+            GridLayoutManager(requireContext(), SPAN_COUNT)
         binding.recyclerViewPlaylists.adapter = playlistAdapter
 
         bNewPlaylist.setOnClickListener {

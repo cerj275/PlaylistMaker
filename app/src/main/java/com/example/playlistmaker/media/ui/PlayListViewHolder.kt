@@ -23,20 +23,10 @@ class PlayListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .placeholder(R.drawable.ic_placeholder)
             .into(ivCover)
         tvName.text = playlist.name
-        tvNumberOfTracks.text = numberOfTracksToString(playlist.numberOfTracks)
-    }
-
-    private fun numberOfTracksToString(numberOfTracks: Int): String {
-        return if (numberOfTracks % 100 in 5..20) {
-            "$numberOfTracks треков"
-        } else {
-            if (numberOfTracks % 10 == 1) {
-                "$numberOfTracks трек"
-            } else if (numberOfTracks % 10 in 2..4) {
-                "$numberOfTracks трека"
-            } else {
-                "$numberOfTracks треков"
-            }
-        }
+        tvNumberOfTracks.text = itemView.resources.getQuantityString(
+            R.plurals.number_of_tracks,
+            playlist.numberOfTracks,
+            playlist.numberOfTracks
+        )
     }
 }

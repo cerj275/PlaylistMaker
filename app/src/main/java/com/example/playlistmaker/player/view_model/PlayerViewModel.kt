@@ -10,6 +10,7 @@ import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.view_model.PlayListsState
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,10 +25,6 @@ class PlayerViewModel(
 
 ) : ViewModel() {
 
-    init {
-        fillData()
-    }
-
     companion object {
         private const val UPDATE_PLAYBACK_TIME_VALUE = 300L
     }
@@ -36,18 +33,18 @@ class PlayerViewModel(
     private val stateLiveData = MutableLiveData<PlayerScreenState>()
     private val favoriteLiveData = MutableLiveData<Boolean>()
     private val playlistsStateLiveData = MutableLiveData<PlayListsState>()
-    private var trackInPlaylistLiveData = MutableLiveData<TrackInPlaylistState>()
-
+    private var trackInPlaylistLiveData = SingleLiveEvent<TrackInPlaylistState>()
 
     init {
         stateLiveData.value = PlayerScreenState.DefaultScreenState()
         favoriteLiveData.value = track.isFavorite
+        fillData()
     }
 
     fun observeState(): LiveData<PlayerScreenState> = stateLiveData
     fun observeFavorite(): LiveData<Boolean> = favoriteLiveData
     fun observePlaylists(): LiveData<PlayListsState> = playlistsStateLiveData
-    fun observeTrackInPlaylist(): LiveData<TrackInPlaylistState> = trackInPlaylistLiveData
+    fun observeTrackInPlaylist(): SingleLiveEvent<TrackInPlaylistState> = trackInPlaylistLiveData
 
 
     private fun renderState(playerState: PlayerScreenState) {
@@ -133,9 +130,11 @@ class PlayerViewModel(
 
     fun fillData() {
         viewModelScope.launch {
-            playlistInteractor.getPlaylists().collect {
-                processResult(it)
-            }
+            playlistInteractor
+                .getPlaylists()
+                .collect {
+                    processResult(it)
+                }
         }
     }
 

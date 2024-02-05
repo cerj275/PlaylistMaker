@@ -80,15 +80,6 @@ class NewPlaylistFragment : Fragment() {
                 }
             }
 
-//        val requestPermissionLauncher =
-//            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-//                if (isGranted) {
-//                    pickMedia.launch(
-//                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-//                    )
-//                }
-//            }
-
         ivAddCover.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }

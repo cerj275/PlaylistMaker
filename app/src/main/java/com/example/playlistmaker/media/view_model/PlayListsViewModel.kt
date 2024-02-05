@@ -20,9 +20,11 @@ class PlayListsViewModel(private val interactor: PlayListsInteractor) : ViewMode
 
     fun fillData() {
         viewModelScope.launch {
-            interactor.getPlaylists().collect {
-                processResult(it)
-            }
+            interactor
+                .getPlaylists()
+                .collect {
+                    processResult(it)
+                }
         }
     }
 

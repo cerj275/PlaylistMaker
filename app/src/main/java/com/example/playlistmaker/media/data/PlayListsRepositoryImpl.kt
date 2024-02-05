@@ -7,7 +7,7 @@ import com.example.playlistmaker.media.domain.api.PlayListsRepository
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class PlayListsRepositoryImpl(
     private val database: AppDatabase,
@@ -18,9 +18,8 @@ class PlayListsRepositoryImpl(
         database.playlistDao().insertPlaylist(playlistDbConverter.map(playlist))
     }
 
-    override fun getPlaylists(): Flow<List<Playlist>> = flow {
-        val playlists = database.playlistDao().getPlaylists()
-        emit(convertToPlaylist(playlists))
+    override fun getPlaylists(): Flow<List<Playlist>> = database.playlistDao().getPlaylists().map {
+        convertToPlaylist(it)
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {

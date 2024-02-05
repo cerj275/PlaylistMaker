@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistDao {
@@ -13,8 +14,8 @@ interface PlaylistDao {
     suspend fun insertPlaylist(playlist: PlaylistEntity)
 
     @Query("SELECT * FROM playlists_table")
-    suspend fun getPlaylists(): List<PlaylistEntity>
+    fun getPlaylists(): Flow<List<PlaylistEntity>>
 
     @Query("UPDATE playlists_table SET tracks=:tracks, numberOfTracks = :numberOfTracks WHERE id = :id")
-    suspend fun updateNumberOfTracks(tracks: String, id: Int, numberOfTracks: Int)
+    suspend fun updateNumberOfTracks(tracks: String, numberOfTracks: Int, id: Int)
 }

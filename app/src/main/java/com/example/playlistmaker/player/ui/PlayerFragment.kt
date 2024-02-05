@@ -36,12 +36,15 @@ import java.util.Locale
 class PlayerFragment : Fragment() {
     companion object {
         private const val TRACK_KEY = "track_key"
+        private const val ZERO = 0
+        private const val FOUR = 4
         fun createArgs(trackJson: String): Bundle = bundleOf(TRACK_KEY to trackJson)
     }
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
+
     private val playlistsAdapter = PlayerBottomSheetAdapter { playlist ->
         viewModel.checkTrackInPlaylist(track, playlist)
     }
@@ -103,7 +106,7 @@ class PlayerFragment : Fragment() {
         if (track.releaseDate.isNullOrEmpty()) {
             tvYear.text = ""
         } else {
-            tvYear.text = track.releaseDate?.substring(0, 4)
+            tvYear.text = track.releaseDate?.substring(ZERO, FOUR)
         }
         tvGenre.text = track.primaryGenreName
         tvCountry.text = track.country
