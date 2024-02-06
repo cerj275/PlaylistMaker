@@ -1,10 +1,6 @@
 package com.example.playlistmaker.media.ui
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,27 +12,21 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.view_model.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
-import java.util.UUID.randomUUID
 
 class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
     private val viewModel: NewPlaylistViewModel by viewModel()
-    private var coverUri: Uri? = null
 
     private lateinit var ibBack: ImageButton
     private lateinit var etPlaylistName: TextInputEditText
@@ -69,14 +59,17 @@ class NewPlaylistFragment : Fragment() {
 
         etPlaylistName.doOnTextChanged { text, start, before, count ->
             text.let { bCreate.isEnabled = !text.isNullOrEmpty() }
+            viewModel.getName(text)
+        }
+        etPlaylistDescription.doOnTextChanged { text, start, before, count ->
+            viewModel.getDescription(text)
         }
 
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    val mediaName = randomUUID().toString()
                     ivAddCover.setImageURI(uri)
-                    coverUri = saveImageToPrivateStorage(uri, mediaName)
+                    viewModel.getCoverUri(uri)
                 }
             }
 
@@ -88,18 +81,10 @@ class NewPlaylistFragment : Fragment() {
             showDialog()
         }
         bCreate.setOnClickListener {
-            viewModel.createPlaylist(
-                Playlist(
-                    0,
-                    etPlaylistName.text.toString(),
-                    etPlaylistDescription.text.toString(),
-                    coverUri.toString(),
-                    mutableListOf(),
-                    0
-                )
-            )
+            viewModel.createPlaylist()
             Toast.makeText(
-                requireContext(), resources.getString(R.string.playlist_created, etPlaylistName.text),
+                requireContext(),
+                resources.getString(R.string.playlist_created, etPlaylistName.text),
                 Toast.LENGTH_SHORT
             ).show()
             findNavController().navigateUp()
@@ -130,7 +115,6 @@ class NewPlaylistFragment : Fragment() {
         tilName = binding.textInputLayoutName
         tilDescription = binding.textInputLayoutDescription
         bCreate = binding.buttonCreateNewPlaylist
-
     }
 
     private fun showDialog() {
@@ -141,31 +125,9 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri, mediaName: String): Uri {
-        val filePath =
-            File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), COVERS)
-
-        if (!filePath.exists()) {
-            filePath.mkdirs()
-        }
-        val file = File(filePath, mediaName)
-        val inputStream = requireContext().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-
-        return file.toUri()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         _binding = null
-    }
-
-    companion object {
-        const val COVERS = "Covers"
     }
 }

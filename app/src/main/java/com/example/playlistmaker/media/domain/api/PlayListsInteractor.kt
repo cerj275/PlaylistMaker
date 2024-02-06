@@ -11,5 +11,4 @@ interface PlayListsInteractor {
     suspend fun updatePlaylist(playlist: Playlist)
     suspend fun addNewTrackToPlaylist(track: Track)
 
-
 }
