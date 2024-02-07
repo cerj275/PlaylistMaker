@@ -3,6 +3,7 @@
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="rounded_corners_cover">2dp</dimen>
     <dimen name="rounded_corners_big_cover">8dp</dimen>
+    <dimen name="rounded_corners_bottom_sheet">16dp</dimen>
     <dimen name="refresh_button_corner_radius">54dp</dimen>
     <dimen name="padding_8">8dp</dimen>
     <dimen name="padding_10">10dp</dimen>
@@ -26,4 +27,10 @@
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="margin_106">106dp</dimen>
     <dimen name="margin_46">46dp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
+    <dimen name="text_field_radius">4dp</dimen>
+    <dimen name="margin_18">18dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_26">26dp</dimen>
 </resources>

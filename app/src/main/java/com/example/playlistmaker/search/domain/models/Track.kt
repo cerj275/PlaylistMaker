@@ -1,11 +1,12 @@
 package com.example.playlistmaker.search.domain.models
 
 import android.os.Parcelable
+import com.google.gson.Gson
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Track(
-    val trackId: Int,
+    val trackId: String,
     val trackName: String,
     val artistName: String?,
     val trackTimeMillis: Long,
@@ -16,4 +17,8 @@ data class Track(
     val country: String,
     val previewUrl: String?,
     var isFavorite: Boolean = false
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
+}
