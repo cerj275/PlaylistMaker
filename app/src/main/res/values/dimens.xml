@@ -33,4 +33,5 @@
     <dimen name="padding_12">12dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="margin_26">26dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
 </resources>

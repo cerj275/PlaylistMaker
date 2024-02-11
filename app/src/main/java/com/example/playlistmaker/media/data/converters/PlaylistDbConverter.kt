@@ -10,12 +10,12 @@ import com.google.gson.reflect.TypeToken
 class PlaylistDbConverter(private val gson: Gson) {
     fun map(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
-            playlist.id,
-            playlist.name,
-            playlist.description,
-            playlist.coverUri,
-            gson.toJson(playlist.tracks),
-            playlist.numberOfTracks,
+            id = playlist.id,
+            name = playlist.name,
+            description = playlist.description,
+            coverUri = playlist.coverUri,
+            tracks = gson.toJson(playlist.tracks),
+            numberOfTracks = playlist.numberOfTracks,
 
             )
     }
@@ -23,27 +23,42 @@ class PlaylistDbConverter(private val gson: Gson) {
     fun map(playlist: PlaylistEntity): Playlist {
         val typeToken = object : TypeToken<List<String>>(){}.type
         return Playlist(
-            playlist.id,
-            playlist.name,
-            playlist.description,
-            playlist.coverUri,
-            gson.fromJson(playlist.tracks, typeToken),
-            playlist.numberOfTracks
+            id = playlist.id,
+            name = playlist.name,
+            description = playlist.description,
+            coverUri = playlist.coverUri,
+            tracks = gson.fromJson(playlist.tracks, typeToken),
+            numberOfTracks = playlist.numberOfTracks
         )
     }
 
     fun map(track: Track): TrackInPlaylistEntity {
         return TrackInPlaylistEntity(
-            track.trackId,
-            track.trackName,
-            track.artistName,
-            track.trackTimeMillis,
-            track.artworkUrl100,
-            track.collectionName,
-            track.releaseDate,
-            track.primaryGenreName,
-            track.country,
-            track.previewUrl
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl
+        )
+    }
+
+    fun map(track: TrackInPlaylistEntity): Track {
+        return Track(
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl,
         )
     }
 

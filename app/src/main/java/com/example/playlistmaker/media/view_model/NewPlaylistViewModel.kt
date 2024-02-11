@@ -8,14 +8,14 @@ import com.example.playlistmaker.media.domain.api.PlayListsInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(
-    private val interactor: PlayListsInteractor,
-    private val newPlaylistInteractor: NewPlaylistInteractor
+open class NewPlaylistViewModel(
+    val interactor: PlayListsInteractor,
+    val newPlaylistInteractor: NewPlaylistInteractor
 ) : ViewModel() {
 
-    private var name: String = ""
-    private var coverUri: String = ""
-    private var description: String = ""
+    protected open var name: String = ""
+    protected open var coverUri: String = ""
+    protected open var description: String = ""
 
     fun getName(text: CharSequence?) {
         name = text.toString()

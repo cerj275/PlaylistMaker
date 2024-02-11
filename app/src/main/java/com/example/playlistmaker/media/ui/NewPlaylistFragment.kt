@@ -23,10 +23,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    protected open val binding get() = _binding!!
+    protected open val viewModel: NewPlaylistViewModel by viewModel()
 
     private lateinit var ibBack: ImageButton
     private lateinit var etPlaylistName: TextInputEditText
@@ -65,17 +65,7 @@ class NewPlaylistFragment : Fragment() {
             viewModel.getDescription(text)
         }
 
-        val pickMedia =
-            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                if (uri != null) {
-                    ivAddCover.setImageURI(uri)
-                    viewModel.getCoverUri(uri)
-                }
-            }
-
-        ivAddCover.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
+        pickMedia()
 
         ibBack.setOnClickListener {
             showDialog()
@@ -129,5 +119,18 @@ class NewPlaylistFragment : Fragment() {
         super.onDestroyView()
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         _binding = null
+    }
+
+    open fun pickMedia() {
+        val pickMedia =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    ivAddCover.setImageURI(uri)
+                    viewModel.getCoverUri(uri)
+                }
+            }
+        ivAddCover.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     }
 }
