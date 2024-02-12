@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -21,7 +22,6 @@ import com.example.playlistmaker.media.view_model.PlaylistDetailsState
 import com.example.playlistmaker.media.view_model.PlaylistDetailsViewModel
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.TrackAdapter
 import com.example.playlistmaker.utils.Converter
 import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,7 +45,7 @@ class PlaylistDetailsFragment : Fragment() {
     private val viewModel: PlaylistDetailsViewModel by viewModel {
         parametersOf(playlistId)
     }
-    private val trackAdapter = TrackAdapter(
+    private val trackAdapter = TrackInPlaylistAdapter(
         clickListener = { track -> onClickDebounce(track) },
         longClickListener = { track -> onLongClick(track) }
     )
@@ -120,6 +120,13 @@ class PlaylistDetailsFragment : Fragment() {
 
         binding.recyclerViewBottomSheet.adapter = trackAdapter
 
+        val hight = resources.displayMetrics.heightPixels - resources.displayMetrics.widthPixels
+
+        val trackBottomSheetBehavior =
+            BottomSheetBehavior.from(binding.linearLayoutTracksBottomSheetContainer).apply {
+                peekHeight = hight - 500
+            }
+
         val bottomSheetBehavior =
             BottomSheetBehavior.from(binding.linearLayoutMenuBottomSheetContainer).apply {
                 state = BottomSheetBehavior.STATE_HIDDEN
@@ -129,8 +136,29 @@ class PlaylistDetailsFragment : Fragment() {
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
-                    else -> binding.overlay.isVisible = true
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                        binding.buttonBack.isEnabled = true
+                        val standardCallback = object : OnBackPressedCallback(true) {
+                            override fun handleOnBackPressed() {
+                                findNavController().navigateUp()
+                            }
+
+                        }
+                        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, standardCallback)
+                    }
+
+                    else -> {
+                        binding.overlay.isVisible = true
+                        binding.buttonBack.isEnabled = false
+                        val callback = object : OnBackPressedCallback(true) {
+                            override fun handleOnBackPressed() {
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+
+                        }
+                        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, callback)
+                    }
                 }
             }
 
@@ -202,7 +230,7 @@ class PlaylistDetailsFragment : Fragment() {
         positiveAction: () -> Unit,
         negativeAction: () -> Unit
     ) {
-        MaterialAlertDialogBuilder(context,R.style.DialogStyle)
+        MaterialAlertDialogBuilder(context, R.style.DialogStyle)
             .setTitle(tittle)
             .setNegativeButton(negativeButtonText) { _, _ -> negativeAction.invoke() }
             .setPositiveButton(positiveButtonText) { _, _ -> positiveAction.invoke() }

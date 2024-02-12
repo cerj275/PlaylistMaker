@@ -21,7 +21,7 @@ class PlaylistDbConverter(private val gson: Gson) {
     }
 
     fun map(playlist: PlaylistEntity): Playlist {
-        val typeToken = object : TypeToken<List<String>>(){}.type
+        val typeToken = object : TypeToken<List<String>>() {}.type
         return Playlist(
             id = playlist.id,
             name = playlist.name,
@@ -39,6 +39,7 @@ class PlaylistDbConverter(private val gson: Gson) {
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis,
             artworkUrl100 = track.artworkUrl100,
+            artworkUrl60 = track.artworkUrl60,
             collectionName = track.collectionName,
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
@@ -53,6 +54,7 @@ class PlaylistDbConverter(private val gson: Gson) {
             trackName = track.trackName,
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis,
+            artworkUrl60 = track.artworkUrl60,
             artworkUrl100 = track.artworkUrl100,
             collectionName = track.collectionName,
             releaseDate = track.releaseDate,
