@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -104,8 +105,29 @@ class PlayerFragment : Fragment() {
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
-                    else -> binding.overlay.isVisible = true
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                        binding.buttonBack.isEnabled = true
+                        val callback = object : OnBackPressedCallback(true) {
+                            override fun handleOnBackPressed() {
+                                findNavController().navigateUp()
+                            }
+
+                        }
+                        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, callback)
+                    }
+
+                    else -> {
+                        binding.overlay.isVisible = true
+                        binding.buttonBack.isEnabled = false
+                        val callback = object : OnBackPressedCallback(true) {
+                            override fun handleOnBackPressed() {
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+
+                        }
+                        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, callback)
+                    }
                 }
             }
 

@@ -1,13 +1,15 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.media.view_model.EditPlaylistViewModel
 import com.example.playlistmaker.media.view_model.FavoriteTracksViewModel
 import com.example.playlistmaker.media.view_model.NewPlaylistViewModel
 import com.example.playlistmaker.media.view_model.PlayListsViewModel
-//import com.example.playlistmaker.media.view_model.PlayListsViewModel
+import com.example.playlistmaker.media.view_model.PlaylistDetailsViewModel
 import com.example.playlistmaker.player.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.view_model.SearchViewModel
 import com.example.playlistmaker.settings.view_model.SettingsViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -32,6 +34,12 @@ val viewModelModule = module {
     }
     viewModel {
         NewPlaylistViewModel(get(), get())
+    }
+    viewModel { (playlistId: Int) ->
+        PlaylistDetailsViewModel(androidContext(), playlistId, get(), get())
+    }
+    viewModel {
+        EditPlaylistViewModel(get(), get())
     }
 
 }

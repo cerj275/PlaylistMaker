@@ -29,9 +29,10 @@ class FavoriteTracksFragment : Fragment() {
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
     private val favoriteTracksViewModel: FavoriteTracksViewModel by viewModel()
-    private val favoriteTracksAdapter = TrackAdapter {
-        onTrackClickDebounce(it)
-    }
+    private val favoriteTracksAdapter = TrackAdapter(
+        clickListener = { track -> onTrackClickDebounce(track) },
+        longClickListener = null
+    )
     private lateinit var onTrackClickDebounce: (Track) -> Unit
     private lateinit var rvFavoriteTracksList: RecyclerView
     private lateinit var llEmptyFavoriteTracks: LinearLayout

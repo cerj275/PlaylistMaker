@@ -33,7 +33,6 @@ class SearchFragment : Fragment() {
 
     companion object {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val TRACK_KEY = "track_key"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
@@ -43,12 +42,14 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
 
     private var searchText: String = ""
-    private val trackAdapter = TrackAdapter {
-        onTrackClickDebounce(it)
-    }
-    private val searchHistoryAdapter = TrackAdapter {
-        onTrackClickDebounce(it)
-    }
+    private val trackAdapter = TrackAdapter(
+        clickListener = { track -> onTrackClickDebounce(track) },
+        longClickListener = null
+    )
+    private val searchHistoryAdapter = TrackAdapter(
+        clickListener = { track -> onTrackClickDebounce(track) },
+        longClickListener = null
+    )
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     private lateinit var inputEditText: EditText
@@ -170,8 +171,6 @@ class SearchFragment : Fragment() {
         bClearSearch = binding.imageViewClearIcon
         inputEditText = binding.editTextSearch
         pbSearchLoading = binding.progressBarSearchLoading
-
-
     }
 
     private fun render(state: SearchScreenState) {

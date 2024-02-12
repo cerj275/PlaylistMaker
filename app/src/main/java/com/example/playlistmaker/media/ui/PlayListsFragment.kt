@@ -68,7 +68,12 @@ class PlayListsFragment : Fragment() {
 
         onPlaylistClickDebounce = debounce<Playlist>(
             CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false
-        ) {}
+        ) { playlist ->
+            findNavController().navigate(
+                R.id.action_mediaLibraryFragment_to_playlistDetailsFragment,
+                PlaylistDetailsFragment.createArgs(playlist.id, playlist),
+            )
+        }
 
     }
 
